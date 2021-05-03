@@ -27,6 +27,7 @@ Events:
     - Leave Room
     - Disconnect
     - Reconnect
+    - Connection
 
 App
 
@@ -46,3 +47,9 @@ Room
 
     - Event Handlers
     - Users
+
+Connection
+
+    - id
+    - ip
+    - port
