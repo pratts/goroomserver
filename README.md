@@ -12,6 +12,11 @@ Design Schema:
 
 Models:
 
+    - App
+    - Room
+    - User
+    - Connection
+
 Events:
 
     - Login
@@ -35,6 +40,7 @@ User
     - id
     - username
     - roomlist
+    - connection
 
 Room
 
