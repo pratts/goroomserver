@@ -42,3 +42,9 @@ func (u *User) removeRoom(r Room) map[string]Room {
 func (u *User) getRoomByName(roomName string) Room {
 	return u.getRoomMap()[roomName]
 }
+
+func (u *User) disconnectUser() {
+	for _, room := range u.roomMap {
+		room.removeUser(*u)
+	}
+}
