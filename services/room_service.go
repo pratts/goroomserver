@@ -27,3 +27,11 @@ func (rs *RoomService) RemoveRoom(roomName string) {
 func (rs *RoomService) GetRoomByName(roomName string) models.Room {
 	return rs.roomMap[roomName]
 }
+
+func (rs *RoomService) GetUserForRoom(roomName string) map[string]models.User {
+	room, ok := rs.roomMap[roomName]
+	if ok == true {
+		return room.GetUserMap()
+	}
+	return nil
+}
