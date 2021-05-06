@@ -6,14 +6,14 @@ type Connection struct {
 	ip   string
 }
 
-func (c Connection) getId() int {
+func (c Connection) GetId() int {
 	return c.id
 }
 
-func (c Connection) getPort() int {
+func (c Connection) GetPort() int {
 	return c.port
 }
 
-func (c Connection) getIP() string {
+func (c Connection) GetIP() string {
 	return c.ip
 }

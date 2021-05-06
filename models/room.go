@@ -6,41 +6,41 @@ type Room struct {
 	usersMap map[string]User
 }
 
-func (r *Room) getId() int {
+func (r *Room) GetId() int {
 	return r.id
 }
 
-func (r *Room) getRoomName() string {
+func (r *Room) GetRoomName() string {
 	return r.name
 }
 
-func (r *Room) getUserMap() map[string]User {
+func (r *Room) GetUserMap() map[string]User {
 	return r.usersMap
 }
 
-func (r *Room) getUserByName(userName string) User {
+func (r *Room) GetUserByName(userName string) User {
 	return r.usersMap[userName]
 }
 
-func (r *Room) addUser(u User) map[string]User {
+func (r *Room) AddUser(u User) map[string]User {
 	r.usersMap[u.name] = u
-	u.addRoom(*r)
+	u.AddRoom(*r)
 	return r.usersMap
 }
 
-func (r *Room) removeUser(u User) map[string]User {
-	u.removeRoom(*r)
-	delete(r.usersMap, u.getName())
+func (r *Room) RemoveUser(u User) map[string]User {
+	u.RemoveRoom(*r)
+	delete(r.usersMap, u.GetName())
 	return r.usersMap
 }
 
-func (r *Room) clearUsers() map[string]User {
+func (r *Room) ClearUsers() map[string]User {
 	r.usersMap = make(map[string]User)
 	return r.usersMap
 }
 
-func (r *Room) removeAllUsers() {
+func (r *Room) RemoveAllUsers() {
 	for _, user := range r.usersMap {
-		r.removeUser(user)
+		r.RemoveUser(user)
 	}
 }

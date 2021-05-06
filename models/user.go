@@ -13,38 +13,38 @@ type User struct {
 	connection Connection
 }
 
-func (u *User) getId() int {
+func (u *User) GetId() int {
 	return u.id
 }
 
-func (u *User) getName() string {
+func (u *User) GetName() string {
 	return u.name
 }
 
-func (u *User) getRoomMap() map[string]Room {
+func (u *User) GetRoomMap() map[string]Room {
 	return u.roomMap
 }
 
-func (u *User) getConnection() Connection {
+func (u *User) GetConnection() Connection {
 	return u.connection
 }
 
-func (u *User) addRoom(r Room) map[string]Room {
-	u.roomMap[r.getRoomName()] = r
+func (u *User) AddRoom(r Room) map[string]Room {
+	u.roomMap[r.GetRoomName()] = r
 	return u.roomMap
 }
 
-func (u *User) removeRoom(r Room) map[string]Room {
-	delete(u.getRoomMap(), r.getRoomName())
+func (u *User) RemoveRoom(r Room) map[string]Room {
+	delete(u.GetRoomMap(), r.GetRoomName())
 	return u.roomMap
 }
 
-func (u *User) getRoomByName(roomName string) Room {
-	return u.getRoomMap()[roomName]
+func (u *User) GetRoomByName(roomName string) Room {
+	return u.GetRoomMap()[roomName]
 }
 
-func (u *User) disconnectUser() {
+func (u *User) DisconnectUser() {
 	for _, room := range u.roomMap {
-		room.removeUser(*u)
+		room.RemoveUser(*u)
 	}
 }
