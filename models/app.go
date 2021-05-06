@@ -6,40 +6,40 @@ type App struct {
 	roomMap map[string]Room
 }
 
-func (app *App) getName() string {
+func (app *App) GetName() string {
 	return app.name
 }
 
-func (app *App) getAllUsers() map[string]User {
+func (app *App) GetAllUsers() map[string]User {
 	return app.userMap
 }
 
-func (app *App) getAllRooms() map[string]Room {
+func (app *App) GetAllRooms() map[string]Room {
 	return app.roomMap
 }
 
-func (app *App) getRoomByName(roomName string) Room {
+func (app *App) GetRoomByName(roomName string) Room {
 	return app.roomMap[roomName]
 }
 
-func (app *App) getUserByName(userName string) User {
+func (app *App) GetUserByName(userName string) User {
 	return app.userMap[userName]
 }
 
-func (app *App) addRoom(r Room) {
-	app.roomMap[r.getRoomName()] = r
+func (app *App) AddRoom(r Room) {
+	app.roomMap[r.GetRoomName()] = r
 }
 
-func (app *App) addUser(u User) {
-	app.userMap[u.getName()] = u
+func (app *App) AddUser(u User) {
+	app.userMap[u.GetName()] = u
 }
 
-func (app *App) removeRoom(r Room) {
-	r.removeAllUsers()
-	delete(app.roomMap, r.getRoomName())
+func (app *App) RemoveRoom(r Room) {
+	r.RemoveAllUsers()
+	delete(app.roomMap, r.GetRoomName())
 }
 
-func (app *App) removeUser(u User) {
-	u.disconnectUser()
-	delete(app.userMap, u.getName())
+func (app *App) RemoveUser(u User) {
+	u.DisconnectUser()
+	delete(app.userMap, u.GetName())
 }
