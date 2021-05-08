@@ -1,6 +1,5 @@
-package events
+package interfaces
 
 type Event interface {
-	getName() string
 	handleEvent(map[string]interface{})
 }
