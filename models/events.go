@@ -12,3 +12,19 @@ const (
 	SUBSCRIBE     int = 9
 	UNSUBSCRIBE   int = 10
 )
+
+var eventsText = map[int]string{
+	CONNECTION:    "Connection",
+	DISCONNECTION: "Disconnection",
+	JOIN_APP:      "Join App",
+	LEAVE_ROOM:    "Leave Room",
+	LOGIN:         "Login",
+	LOGOUT:        "Logout",
+	RECONNECT:     "Reconnect",
+	SUBSCRIBE:     "Subscribe",
+	UNSUBSCRIBE:   "Unsubscribe",
+}
+
+func EventText(code int) string {
+	return eventsText[code]
+}

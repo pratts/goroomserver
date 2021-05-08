@@ -1,4 +1,4 @@
-package services
+package services_apps
 
 import (
 	models "github.com/pratts/go-room-server/models"
