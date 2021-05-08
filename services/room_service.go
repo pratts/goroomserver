@@ -5,11 +5,19 @@ import (
 )
 
 type RoomService struct {
-	roomMap map[string]models.Room
+	roomMap         map[string]models.Room
+	numRoomsCreated int
 }
 
 func (rs *RoomService) GetRoomMap() map[string]models.Room {
 	return rs.roomMap
+}
+
+func (rs *RoomService) CreateRoom(roomName string, maxUsers int) {
+	room := models.Room{Id: rs.numRoomsCreated + 1, Name: roomName, MaxUserCount: maxUsers}
+	room.CreateUserMap()
+	rs.numRoomsCreated += 1
+	rs.AddRoom(room)
 }
 
 func (rs *RoomService) AddRoom(room models.Room) {

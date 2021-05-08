@@ -1,46 +1,55 @@
 package models
 
 type Room struct {
-	id       int
-	name     string
-	usersMap map[string]User
+	Id           int
+	Name         string
+	UsersMap     map[string]User
+	MaxUserCount int
 }
 
 func (r *Room) GetId() int {
-	return r.id
+	return r.Id
 }
 
 func (r *Room) GetRoomName() string {
-	return r.name
+	return r.Name
+}
+
+func (r *Room) CreateUserMap() map[string]User {
+	r.UsersMap = make(map[string]User)
+	return r.UsersMap
 }
 
 func (r *Room) GetUserMap() map[string]User {
-	return r.usersMap
+	return r.UsersMap
+}
+
+func (r *Room) GetMaxUserCount() int {
+	return r.MaxUserCount
 }
 
 func (r *Room) GetUserByName(userName string) User {
-	return r.usersMap[userName]
+	return r.UsersMap[userName]
 }
 
 func (r *Room) AddUser(u User) map[string]User {
-	r.usersMap[u.name] = u
+	r.UsersMap[u.name] = u
 	u.AddRoom(*r)
-	return r.usersMap
+	return r.UsersMap
 }
 
 func (r *Room) RemoveUser(u User) map[string]User {
 	u.RemoveRoom(*r)
-	delete(r.usersMap, u.GetName())
-	return r.usersMap
+	delete(r.UsersMap, u.GetName())
+	return r.UsersMap
 }
 
 func (r *Room) ClearUsers() map[string]User {
-	r.usersMap = make(map[string]User)
-	return r.usersMap
+	return r.CreateUserMap()
 }
 
 func (r *Room) RemoveAllUsers() {
-	for _, user := range r.usersMap {
+	for _, user := range r.UsersMap {
 		r.RemoveUser(user)
 	}
 }
