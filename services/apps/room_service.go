@@ -8,16 +8,22 @@ import (
 type RoomService struct {
 	roomMap         map[string]models.Room
 	numRoomsCreated int
-	eventHandler    map[int]interfaces.Instance
+	eventHandler    map[int]interfaces.Extension
+}
+
+func (rs *RoomService) InitRoomService() {
+	rs.roomMap = make(map[string]models.Room)
+	rs.numRoomsCreated = 0
+	rs.eventHandler = make(map[int]interfaces.Extension)
 }
 
 func (rs *RoomService) GetRoomMap() map[string]models.Room {
 	return rs.roomMap
 }
 
-func (rs *RoomService) CreateRoom(roomName string, maxUsers int) {
-	room := models.Room{Id: rs.numRoomsCreated + 1, Name: roomName, MaxUserCount: maxUsers}
-	room.CreateUserMap()
+func (rs *RoomService) CreateRoom(roomName string, maxUsers int, extension interface{}) {
+	room := models.Room{Id: rs.numRoomsCreated + 1, Name: roomName, MaxUserCount: maxUsers, Extension: extension}
+	room.InitRoomData()
 	rs.numRoomsCreated += 1
 	rs.AddRoom(room)
 }

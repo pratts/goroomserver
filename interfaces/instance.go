@@ -1,6 +1,6 @@
 package interfaces
 
-type Instance interface {
+type Extension interface {
 	init()
 	addEventHandler(eventName string, e *Event)
 	removeEventHandler(eventName string)

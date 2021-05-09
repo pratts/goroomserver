@@ -8,6 +8,10 @@ type UserService struct {
 	userMap map[string]models.User
 }
 
+func (us *UserService) InitUserService() {
+	us.userMap = make(map[string]models.User)
+}
+
 func (us *UserService) GetUserMap() map[string]models.User {
 	return us.userMap
 }

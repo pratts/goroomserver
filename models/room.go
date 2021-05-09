@@ -1,10 +1,21 @@
 package models
 
+import (
+	interfaces "github.com/pratts/go-room-server/interfaces"
+)
+
 type Room struct {
 	Id           int
 	Name         string
 	UsersMap     map[string]User
 	MaxUserCount int
+	eventHandler map[int]interfaces.Event
+	Extension    interface{}
+}
+
+func (r *Room) InitRoomData() {
+	r.CreateUserMap()
+	r.CreateEventHander()
 }
 
 func (r *Room) GetId() int {
@@ -52,4 +63,17 @@ func (r *Room) RemoveAllUsers() {
 	for _, user := range r.UsersMap {
 		r.RemoveUser(user)
 	}
+}
+
+func (r *Room) addEventHandler(code int, e interfaces.Event) {
+	r.eventHandler[code] = e
+}
+
+func (r *Room) removeEventHandler(code int) {
+	delete(r.eventHandler, code)
+}
+
+func (r *Room) CreateEventHander() map[int]interfaces.Event {
+	r.eventHandler = make(map[int]interfaces.Event)
+	return r.eventHandler
 }
