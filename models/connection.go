@@ -1,19 +1,18 @@
 package models
 
+import (
+	"github.com/gorilla/websocket"
+)
+
 type Connection struct {
-	id   int
-	port int
-	ip   string
+	Id               int
+	SocketConnection websocket.Conn
 }
 
 func (c Connection) GetId() int {
-	return c.id
+	return c.Id
 }
 
-func (c Connection) GetPort() int {
-	return c.port
-}
-
-func (c Connection) GetIP() string {
-	return c.ip
+func (c *Connection) getConnection() websocket.Conn {
+	return c.SocketConnection
 }
