@@ -19,6 +19,11 @@ import (
 
 var addr = flag.String("addr", "localhost:8080", "http service address")
 
+type test_data struct {
+	Id   int
+	Name string
+}
+
 func main() {
 	flag.Parse()
 	log.SetFlags(0)
@@ -57,7 +62,10 @@ func main() {
 		case <-done:
 			return
 		case t := <-ticker.C:
-			err := c.WriteMessage(websocket.TextMessage, []byte(t.String()))
+			// err := c.WriteMessage(websocket.TextMessage, []byte(t.String()))
+			log.Println("Data t: %v", t.String())
+			data := test_data{Id: 1, Name: "prateek"}
+			c.WriteJSON(data)
 			if err != nil {
 				log.Println("write:", err)
 				return
