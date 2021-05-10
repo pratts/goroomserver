@@ -45,7 +45,9 @@ func main() {
 	go func() {
 		defer close(done)
 		for {
-			_, message, err := c.ReadMessage()
+			log.Println("read data")
+			message := make(map[string]interface{})
+			err := c.ReadJSON(&message)
 			if err != nil {
 				log.Println("read:", err)
 				return

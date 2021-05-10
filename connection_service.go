@@ -23,7 +23,7 @@ func (connectionService *ConnectionService) Init(eventService *EventService) {
 }
 
 func (connectionService *ConnectionService) addConnection(connection *websocket.Conn) {
-	conn := models.Connection{Id: connectionService.numConnection + 1, SocketConnection: connection}
+	conn := models.Connection{Id: connectionService.numConnection + 1, SocketConnection: connection, RemoteAddress: connection.RemoteAddr().String()}
 	connectionService.numConnection += 1
 	connectionService.connectionMap[connectionService.numConnection] = conn
 }
@@ -41,7 +41,7 @@ func (connectionService *ConnectionService) listen(w http.ResponseWriter, r *htt
 	defer c.Close()
 	for {
 		payload := make(map[string]interface{})
-		err := c.ReadJSON(payload)
+		err := c.ReadJSON(&payload)
 		if err != nil {
 			log.Println("read:", err)
 			break
