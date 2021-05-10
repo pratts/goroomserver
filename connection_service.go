@@ -22,8 +22,8 @@ func (connectionService *ConnectionService) Init(eventService *EventService) {
 	connectionService.eventService = *eventService
 }
 
-func (connectionService *ConnectionService) addConnection(connection *websocket.Conn) {
-	conn := models.Connection{Id: connectionService.numConnection + 1, SocketConnection: *connection}
+func (connectionService *ConnectionService) addConnection(connection websocket.Conn) {
+	conn := models.Connection{Id: connectionService.numConnection + 1, SocketConnection: &connection}
 	connectionService.numConnection += 1
 	connectionService.connectionMap[connectionService.numConnection] = conn
 }
