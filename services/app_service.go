@@ -1,4 +1,4 @@
-package services_apps
+package services
 
 import (
 	interfaces "github.com/pratts/go-room-server/interfaces"

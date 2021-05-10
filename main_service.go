@@ -2,7 +2,7 @@ package main
 
 import (
 	interfaces "github.com/pratts/go-room-server/interfaces"
-	services "github.com/pratts/go-room-server/services/apps"
+	services "github.com/pratts/go-room-server/services"
 )
 
 type MainService struct {
