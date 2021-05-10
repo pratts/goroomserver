@@ -40,13 +40,14 @@ func (connectionService *ConnectionService) listen(w http.ResponseWriter, r *htt
 	connectionService.addConnection(c)
 	defer c.Close()
 	for {
-		mt, message, err := c.ReadMessage()
+		payload := make(map[string]interface{})
+		err := c.ReadJSON(payload)
 		if err != nil {
 			log.Println("read:", err)
 			break
 		}
-		log.Printf("recv: %s", message)
-		err = c.WriteMessage(mt, message)
+		log.Printf("recv: %s", payload)
+		err = c.WriteJSON(payload)
 		if err != nil {
 			log.Println("write:", err)
 			break
