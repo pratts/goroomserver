@@ -5,10 +5,11 @@ import (
 )
 
 type AppService struct {
+	Name         string
 	roomService  RoomService
 	userService  UserService
 	eventHandler map[int]interfaces.Event
-	extension    interfaces.Extension
+	Extension    interfaces.Extension
 }
 
 func (appService *AppService) InitData() {
@@ -21,8 +22,8 @@ func (appService *AppService) InitData() {
 	appService.eventHandler = make(map[int]interfaces.Event)
 }
 
-func (appService *AppService) setExtension(extension interfaces.Extension) {
-	appService.extension = extension
+func (appService *AppService) setExtension(extension *interfaces.Extension) {
+	appService.Extension = *extension
 }
 
 func (appService *AppService) getRoomService() RoomService {
@@ -34,5 +35,5 @@ func (appService *AppService) getUserService() UserService {
 }
 
 func (appService *AppService) addExtension(extension interfaces.Extension) {
-	appService.extension = extension
+	appService.Extension = extension
 }
