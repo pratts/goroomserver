@@ -1,20 +1,17 @@
 package services
 
 import (
-	interfaces "github.com/pratts/go-room-server/interfaces"
 	models "github.com/pratts/go-room-server/models"
 )
 
 type RoomService struct {
 	roomMap         map[string]models.Room
 	numRoomsCreated int
-	eventHandler    map[int]interfaces.Extension
 }
 
 func (rs *RoomService) InitRoomService() {
 	rs.roomMap = make(map[string]models.Room)
 	rs.numRoomsCreated = 0
-	rs.eventHandler = make(map[int]interfaces.Extension)
 }
 
 func (rs *RoomService) GetRoomMap() map[string]models.Room {

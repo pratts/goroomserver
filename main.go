@@ -40,19 +40,15 @@ func GetInstance() *MainService {
 		lock.Lock()
 		defer lock.Unlock()
 		if mainServiceInstance == nil {
-			fmt.Println("Creting Single Instance Now")
 			mainServiceInstance = &MainService{}
 			mainServiceInstance.Init()
-		} else {
-			fmt.Println("Single Instance already created-1")
 		}
-	} else {
-		fmt.Println("Single Instance already created-2")
 	}
 	return mainServiceInstance
 }
 
-// func main() {
-// 	GetInstance()
-// }
-var mainService = GetInstance()
+func main() {
+	GetInstance()
+}
+
+// var mainService = GetInstance()

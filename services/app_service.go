@@ -19,7 +19,7 @@ func (appService *AppService) InitData() {
 	appService.userService = UserService{}
 	appService.userService.InitUserService()
 
-	appService.eventHandler = make(map[int]interfaces.Event)
+	appService.CreateEventHander()
 }
 
 func (appService *AppService) setExtension(extension *interfaces.Extension) {
@@ -36,4 +36,17 @@ func (appService *AppService) getUserService() UserService {
 
 func (appService *AppService) addExtension(extension interfaces.Extension) {
 	appService.Extension = extension
+}
+
+func (appService *AppService) addEventHandler(code int, e interfaces.Event) {
+	appService.eventHandler[code] = e
+}
+
+func (appService *AppService) removeEventHandler(code int) {
+	delete(appService.eventHandler, code)
+}
+
+func (appService *AppService) CreateEventHander() map[int]interfaces.Event {
+	appService.eventHandler = make(map[int]interfaces.Event)
+	return appService.eventHandler
 }

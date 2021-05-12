@@ -1,9 +1,3 @@
-// User
-
-//     - id
-//     - username
-//     - roomlist
-//     - connection
 package models
 
 type User struct {

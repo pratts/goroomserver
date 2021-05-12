@@ -1,7 +1,7 @@
 package interfaces
 
 type Extension interface {
-	init()
+	init(map[string]interface{})
 	addEventHandler(eventName string, e *Event)
 	removeEventHandler(eventName string)
 	sendResponseToUser(string, interface{})
