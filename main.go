@@ -2,10 +2,57 @@ package main
 
 import (
 	"fmt"
+	"sync"
+
+	interfaces "github.com/pratts/go-room-server/interfaces"
+	services "github.com/pratts/go-room-server/services"
 )
 
-func main() {
-	fmt.Println("Hello world")
-	mainService := MainService{}
-	mainService.Init()
+type MainService struct {
+	connectionService ConnectionService
+	eventService      EventService
+	appServices       map[string]services.AppService
 }
+
+func (mainService *MainService) Init() {
+	mainService.eventService = EventService{}
+
+	mainService.connectionService = ConnectionService{}
+	mainService.connectionService.Init(&mainService.eventService)
+	mainService.connectionService.StartConnectionService()
+}
+
+func (mainService *MainService) createAppService(appName string, extension interfaces.Extension) {
+	appService := services.AppService{Name: appName, Extension: extension}
+	appService.InitData()
+	mainService.appServices[appName] = appService
+}
+
+func (mainService *MainService) getAppService(appName string) services.AppService {
+	return mainService.appServices[appName]
+}
+
+var mainServiceInstance *MainService
+var lock = &sync.Mutex{}
+
+func GetInstance() *MainService {
+	if mainServiceInstance == nil {
+		lock.Lock()
+		defer lock.Unlock()
+		if mainServiceInstance == nil {
+			fmt.Println("Creting Single Instance Now")
+			mainServiceInstance = &MainService{}
+			mainServiceInstance.Init()
+		} else {
+			fmt.Println("Single Instance already created-1")
+		}
+	} else {
+		fmt.Println("Single Instance already created-2")
+	}
+	return mainServiceInstance
+}
+
+// func main() {
+// 	GetInstance()
+// }
+var mainService = GetInstance()
