@@ -1,4 +1,4 @@
-package interfaces
+package goroomserver
 
 type Event interface {
 	handleEvent(map[string]interface{})

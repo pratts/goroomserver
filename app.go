@@ -1,4 +1,4 @@
-package models
+package goroomserver
 
 type App struct {
 	name    string

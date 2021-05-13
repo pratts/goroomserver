@@ -1,4 +1,4 @@
-package main
+package goroomserver
 
 import (
 	"flag"
@@ -9,6 +9,8 @@ import (
 )
 
 type WebSocketService struct {
+	connectionService *ConnectionService
+	eventService      *EventService
 }
 
 func (webSocketService *WebSocketService) listen(w http.ResponseWriter, r *http.Request) {
@@ -19,7 +21,7 @@ func (webSocketService *WebSocketService) listen(w http.ResponseWriter, r *http.
 		return
 	}
 
-	log.Printf("Started taking connections")
+	webSocketService.connectionService.addConnection(c)
 	defer c.Close()
 	for {
 		payload := make(map[string]interface{})
@@ -29,6 +31,14 @@ func (webSocketService *WebSocketService) listen(w http.ResponseWriter, r *http.
 			break
 		}
 		log.Printf("recv: %s", payload)
+		webSocketService.eventService.handleEvent(payload)
+	}
+}
+
+func (webSocketService *WebSocketService) WriteToSocket(c *websocket.Conn, payload map[string]interface{}) {
+	err := c.WriteJSON(payload)
+	if err != nil {
+		log.Println("write:", err)
 	}
 }
 

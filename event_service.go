@@ -1,14 +1,10 @@
-package services
-
-import (
-	models "github.com/pratts/go-room-server/models"
-)
+package goroomserver
 
 type EventService struct {
 }
 
 func (e *EventService) getEvent(code int) string {
-	return models.EventText(code)
+	return EventText(code)
 }
 
 func (e *EventService) handleEvent(payload map[string]interface{}) {

@@ -1,4 +1,4 @@
-package interfaces
+package goroomserver
 
 type Extension interface {
 	init(map[string]interface{})

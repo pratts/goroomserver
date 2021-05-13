@@ -1,4 +1,4 @@
-package models
+package goroomserver
 
 const (
 	CONNECTION    int = 1

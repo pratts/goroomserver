@@ -1,8 +1,6 @@
-package models
+package goroomserver
 
 import (
-	"fmt"
-
 	"github.com/gorilla/websocket"
 )
 
@@ -25,8 +23,5 @@ func (c *Connection) getRemoteAddress() string {
 }
 
 func (c *Connection) WriteToSocket(payload map[string]interface{}) {
-	err := c.SocketConnection.WriteJSON(payload)
-	if err != nil {
-		fmt.Println("write:", err)
-	}
+	GetInstance().webSocketService.WriteToSocket(c.SocketConnection, payload)
 }

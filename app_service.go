@@ -1,15 +1,11 @@
-package services
-
-import (
-	interfaces "github.com/pratts/go-room-server/interfaces"
-)
+package goroomserver
 
 type AppService struct {
 	Name         string
 	roomService  RoomService
 	userService  UserService
-	eventHandler map[int]interfaces.Event
-	Extension    interfaces.Extension
+	eventHandler map[int]Event
+	Extension    Extension
 }
 
 func (appService *AppService) InitData() {
@@ -22,7 +18,7 @@ func (appService *AppService) InitData() {
 	appService.CreateEventHander()
 }
 
-func (appService *AppService) setExtension(extension *interfaces.Extension) {
+func (appService *AppService) setExtension(extension *Extension) {
 	appService.Extension = *extension
 }
 
@@ -34,11 +30,11 @@ func (appService *AppService) getUserService() UserService {
 	return appService.userService
 }
 
-func (appService *AppService) addExtension(extension interfaces.Extension) {
+func (appService *AppService) addExtension(extension Extension) {
 	appService.Extension = extension
 }
 
-func (appService *AppService) addEventHandler(code int, e interfaces.Event) {
+func (appService *AppService) addEventHandler(code int, e Event) {
 	appService.eventHandler[code] = e
 }
 
@@ -46,7 +42,7 @@ func (appService *AppService) removeEventHandler(code int) {
 	delete(appService.eventHandler, code)
 }
 
-func (appService *AppService) CreateEventHander() map[int]interfaces.Event {
-	appService.eventHandler = make(map[int]interfaces.Event)
+func (appService *AppService) CreateEventHander() map[int]Event {
+	appService.eventHandler = make(map[int]Event)
 	return appService.eventHandler
 }
