@@ -20,7 +20,7 @@ func (mainService *MainService) Init() {
 		eventService:      &mainService.eventService,
 		connectionService: &mainService.connectionService,
 	}
-	go mainService.webSocketService.StartConnectionService()
+	mainService.webSocketService.StartConnectionService()
 }
 
 func (mainService *MainService) createAppService(appName string, extension Extension) {
