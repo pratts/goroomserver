@@ -1,4 +1,4 @@
-package main
+package services
 
 import (
 	models "github.com/pratts/go-room-server/models"
@@ -12,9 +12,9 @@ func (e *EventService) getEvent(code int) string {
 }
 
 func (e *EventService) handleEvent(payload map[string]interface{}) {
-	appName := payload["appName"]
-	roomName := payload["roomName"]
-	eventType := payload["eventType"]
-	remoteAddr := payload["remoteAddr"]
-	data := payload["data"]
+	// appName := payload["appName"]
+	// roomName := payload["roomName"]
+	// eventType := payload["eventType"]
+	// remoteAddr := payload["remoteAddr"]
+	// data := payload["data"]
 }
