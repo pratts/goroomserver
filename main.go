@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"sync"
 
 	interfaces "github.com/pratts/go-room-server/interfaces"
