@@ -5,7 +5,7 @@ type Room struct {
 	Name         string
 	UsersMap     map[string]User
 	MaxUserCount int
-	eventHandler map[int]Event
+	eventHandler map[int]EventHandler
 	Extension    interface{}
 }
 
@@ -61,7 +61,7 @@ func (r *Room) RemoveAllUsers() {
 	}
 }
 
-func (r *Room) addEventHandler(code int, e Event) {
+func (r *Room) addEventHandler(code int, e EventHandler) {
 	r.eventHandler[code] = e
 }
 
@@ -69,7 +69,20 @@ func (r *Room) removeEventHandler(code int) {
 	delete(r.eventHandler, code)
 }
 
-func (r *Room) CreateEventHander() map[int]Event {
-	r.eventHandler = make(map[int]Event)
+func (r *Room) CreateEventHander() map[int]EventHandler {
+	r.eventHandler = make(map[int]EventHandler)
 	return r.eventHandler
+}
+
+func (r *Room) sendResponseToUser(userName string, payload map[string]interface{}) {
+	u := r.GetUserByName(userName)
+	u.SendMessageToUser(payload)
+}
+
+func (r *Room) sendResponseToUserList(userList []string, payload map[string]interface{}) {
+
+}
+
+func (r *Room) sendResponseToAll(payload map[string]interface{}) {
+
 }

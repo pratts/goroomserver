@@ -1,8 +1,8 @@
 package goroomserver
 
-type Extension interface {
+type Extension1 interface {
 	init(map[string]interface{})
-	addEventHandler(eventName string, e *Event)
+	addEventHandler(eventName string, e *EventHandler)
 	removeEventHandler(eventName string)
 	sendResponseToUser(string, interface{})
 	sendResponseToUserList([]string, interface{})

@@ -4,7 +4,7 @@ type AppService struct {
 	Name         string
 	roomService  RoomService
 	userService  UserService
-	eventHandler map[int]Event
+	eventHandler map[int]EventHandler
 	Extension    Extension
 }
 
@@ -34,7 +34,7 @@ func (appService *AppService) addExtension(extension Extension) {
 	appService.Extension = extension
 }
 
-func (appService *AppService) addEventHandler(code int, e Event) {
+func (appService *AppService) addEventHandler(code int, e EventHandler) {
 	appService.eventHandler[code] = e
 }
 
@@ -42,7 +42,7 @@ func (appService *AppService) removeEventHandler(code int) {
 	delete(appService.eventHandler, code)
 }
 
-func (appService *AppService) CreateEventHander() map[int]Event {
-	appService.eventHandler = make(map[int]Event)
+func (appService *AppService) CreateEventHander() map[int]EventHandler {
+	appService.eventHandler = make(map[int]EventHandler)
 	return appService.eventHandler
 }

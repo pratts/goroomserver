@@ -1,5 +1,5 @@
 package goroomserver
 
-type Event interface {
+type EventHandler1 interface {
 	handleEvent(map[string]interface{})
 }

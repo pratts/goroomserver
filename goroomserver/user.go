@@ -42,3 +42,7 @@ func (u *User) DisconnectUser() {
 		room.RemoveUser(*u)
 	}
 }
+
+func (u *User) SendMessageToUser(payload map[string]interface{}) {
+	u.connection.WriteToSocket(payload)
+}
