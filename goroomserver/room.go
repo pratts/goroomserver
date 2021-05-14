@@ -80,9 +80,14 @@ func (r *Room) sendResponseToUser(userName string, payload map[string]interface{
 }
 
 func (r *Room) sendResponseToUserList(userList []string, payload map[string]interface{}) {
-
+	for i := 0; i < len(userList); i++ {
+		u := r.GetUserByName(userList[i])
+		u.SendMessageToUser(payload)
+	}
 }
 
 func (r *Room) sendResponseToAll(payload map[string]interface{}) {
-
+	for _, user := range r.UsersMap {
+		user.SendMessageToUser(payload)
+	}
 }

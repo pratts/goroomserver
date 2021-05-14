@@ -11,7 +11,8 @@ type MainService struct {
 	webSocketService  WebSocketService
 }
 
-func (mainService *MainService) Init() {
+func (mainService *MainService) Init(wg *sync.WaitGroup) {
+	defer wg.Done()
 	mainService.eventService = EventService{}
 	mainService.connectionService = ConnectionService{}
 	mainService.connectionService.Init(&mainService.eventService)
@@ -42,7 +43,6 @@ func GetInstance() *MainService {
 		defer lock.Unlock()
 		if mainServiceInstance == nil {
 			mainServiceInstance = &MainService{}
-			mainServiceInstance.Init()
 		}
 	}
 	return mainServiceInstance
