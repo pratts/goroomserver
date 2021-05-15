@@ -6,12 +6,19 @@ type Room struct {
 	UsersMap     map[string]User
 	MaxUserCount int
 	eventHandler map[int]EventHandler
-	Extension    interface{}
+	Extension    Extension
 }
 
 func (r *Room) InitRoomData() {
 	r.CreateUserMap()
 	r.CreateEventHander()
+	r.initExtension()
+}
+
+func (r *Room) initExtension() {
+	payload := make(map[string]interface{})
+	payload["room"] = r
+	r.Extension.init(payload)
 }
 
 func (r *Room) GetId() int {

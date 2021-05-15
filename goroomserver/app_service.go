@@ -18,6 +18,11 @@ func (appService *AppService) InitData() {
 	appService.CreateEventHander()
 }
 
+func (appService *AppService) initExtension() {
+	payload := make(map[string]interface{})
+	appService.Extension.init(payload)
+}
+
 func (appService *AppService) setExtension(extension *Extension) {
 	appService.Extension = *extension
 }
