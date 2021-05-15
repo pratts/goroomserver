@@ -27,10 +27,10 @@ type test_data struct {
 }
 
 type Payload struct {
-	AppName   string      `json:"appName"`
-	RoomName  string      `json:"roomName"`
-	EventType int         `json:"eventType"`
-	Payload   interface{} `json:"payload"`
+	AppName   string                 `json:"appName"`
+	RoomName  string                 `json:"roomName"`
+	EventType int                    `json:"eventType"`
+	Payload   map[string]interface{} `json:"payload"`
 }
 
 func main() {
