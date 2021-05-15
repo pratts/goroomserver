@@ -46,3 +46,7 @@ func (appService *AppService) CreateEventHander() map[int]EventHandler {
 	appService.eventHandler = make(map[int]EventHandler)
 	return appService.eventHandler
 }
+
+func (appService *AppService) HandleEvent(payload map[string]interface{}) {
+
+}

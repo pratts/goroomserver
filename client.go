@@ -7,7 +7,9 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
+	"fmt"
 	"log"
 	"net/url"
 	"os"
@@ -22,6 +24,13 @@ var addr = flag.String("addr", "localhost:8080", "http service address")
 type test_data struct {
 	Id   int
 	Name string
+}
+
+type Payload struct {
+	AppName   string      `json:"appName"`
+	RoomName  string      `json:"roomName"`
+	EventType int         `json:"eventType"`
+	Payload   interface{} `json:"payload"`
 }
 
 func main() {
@@ -46,13 +55,17 @@ func main() {
 		defer close(done)
 		for {
 			log.Println("read data")
-			message := make(map[string]interface{})
-			err := c.ReadJSON(&message)
+			payload := Payload{}
+			_, message, err := c.ReadMessage()
+			parseError := json.Unmarshal(message, &payload)
+			if parseError != nil {
+				return
+			}
 			if err != nil {
 				log.Println("read:", err)
 				return
 			}
-			log.Printf("recv: %s", message)
+			log.Printf("recv: %s", payload)
 		}
 	}()
 
@@ -64,10 +77,15 @@ func main() {
 		case <-done:
 			return
 		case t := <-ticker.C:
-			// err := c.WriteMessage(websocket.TextMessage, []byte(t.String()))
-			log.Println("Data t: %v", t.String())
-			data := test_data{Id: 1, Name: "prateek"}
-			c.WriteJSON(data)
+			fmt.Println("t:", t)
+			payload := make(map[string]interface{})
+			payload["a"] = 1
+			data := Payload{RoomName: "test1", EventType: 1, Payload: payload}
+			b, err1 := json.Marshal(&data)
+			if err1 != nil {
+				fmt.Println("error in parsing")
+			}
+			err := c.WriteMessage(websocket.TextMessage, b)
 			if err != nil {
 				log.Println("write:", err)
 				return

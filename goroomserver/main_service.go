@@ -13,7 +13,7 @@ type MainService struct {
 
 func (mainService *MainService) Init(wg *sync.WaitGroup) {
 	defer wg.Done()
-	mainService.eventService = EventService{}
+	mainService.eventService = EventService{mainService: mainService}
 	mainService.connectionService = ConnectionService{}
 	mainService.connectionService.Init(&mainService.eventService)
 

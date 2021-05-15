@@ -1,6 +1,7 @@
 package goroomserver
 
 import (
+	"encoding/json"
 	"flag"
 	"log"
 	"net/http"
@@ -24,13 +25,17 @@ func (webSocketService *WebSocketService) listen(w http.ResponseWriter, r *http.
 	webSocketService.connectionService.addConnection(c)
 	defer c.Close()
 	for {
-		payload := make(map[string]interface{})
-		err := c.ReadJSON(&payload)
+		payload := Payload{}
+		_, message, err := c.ReadMessage()
 		if err != nil {
-			log.Println("read:", err)
+			log.Println("Error while reading message:", err)
 			break
 		}
-		log.Printf("recv: %s", payload)
+		parseError := json.Unmarshal(message, &payload)
+		if parseError != nil {
+			log.Println("Error while parsing data:", parseError)
+		}
+		payload.RemoteAddress = c.RemoteAddr().String()
 		webSocketService.eventService.handleEvent(payload)
 	}
 }
