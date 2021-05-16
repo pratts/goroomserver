@@ -10,8 +10,7 @@ import (
 )
 
 type WebSocketService struct {
-	connectionService *ConnectionService
-	eventService      *EventService
+	eventService *EventService
 }
 
 func (webSocketService *WebSocketService) listen(w http.ResponseWriter, r *http.Request) {
@@ -22,12 +21,16 @@ func (webSocketService *WebSocketService) listen(w http.ResponseWriter, r *http.
 		return
 	}
 
-	webSocketService.connectionService.addConnection(c)
+	conn := Connection{Id: 0, SocketConnection: c, RemoteAddress: c.RemoteAddr().String()}
+	payload := Payload{EventType: CONNECTION, connection: conn}
+	webSocketService.eventService.handleEvent(payload)
 	defer c.Close()
 	for {
 		payload := Payload{}
 		_, message, err := c.ReadMessage()
 		if err != nil {
+			payload := Payload{EventType: DISCONNECTION, RemoteAddress: c.RemoteAddr().String()}
+			webSocketService.eventService.handleEvent(payload)
 			log.Println("Error while reading message:", err)
 			break
 		}

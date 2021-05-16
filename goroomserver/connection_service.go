@@ -21,3 +21,13 @@ func (connectionService *ConnectionService) addConnection(connection *websocket.
 	connectionService.numConnection += 1
 	connectionService.connectionMap[connection.RemoteAddr().String()] = conn
 }
+
+func (connectionService *ConnectionService) addConnectionInstance(conn Connection) {
+	connectionService.numConnection += 1
+	conn.Id = connectionService.numConnection
+	connectionService.connectionMap[conn.RemoteAddress] = conn
+}
+
+func (connectionService *ConnectionService) removeConnection(remoteAddress string) {
+	delete(connectionService.connectionMap, remoteAddress)
+}

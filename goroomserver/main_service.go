@@ -18,8 +18,7 @@ func (mainService *MainService) Init(wg *sync.WaitGroup) {
 	mainService.connectionService.Init(&mainService.eventService)
 
 	mainService.webSocketService = WebSocketService{
-		eventService:      &mainService.eventService,
-		connectionService: &mainService.connectionService,
+		eventService: &mainService.eventService,
 	}
 	mainService.webSocketService.StartConnectionService()
 }

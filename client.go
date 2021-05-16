@@ -80,7 +80,7 @@ func main() {
 			fmt.Println("t:", t)
 			payload := make(map[string]interface{})
 			payload["a"] = 1
-			data := Payload{RoomName: "test1", EventType: 1, Payload: payload}
+			data := Payload{RoomName: "test1", EventType: 13, Payload: payload}
 			b, err1 := json.Marshal(&data)
 			if err1 != nil {
 				fmt.Println("error in parsing")
