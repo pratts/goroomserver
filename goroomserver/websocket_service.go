@@ -22,7 +22,7 @@ func (webSocketService *WebSocketService) listen(w http.ResponseWriter, r *http.
 	}
 
 	conn := Connection{Id: 0, SocketConnection: c, RemoteAddress: c.RemoteAddr().String()}
-	payload := Payload{EventType: CONNECTION, connection: conn}
+	payload := Payload{EventType: CONNECTION, Connection: conn}
 	webSocketService.eventService.handleEvent(payload)
 	defer c.Close()
 	for {
