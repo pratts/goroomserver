@@ -11,7 +11,7 @@ type Room struct {
 
 func (r *Room) InitRoomData() {
 	r.CreateUserMap()
-	r.CreateEventHander()
+	r.CreateEventHandler()
 	r.initExtension()
 }
 
@@ -77,7 +77,7 @@ func (r *Room) removeEventHandler(code int) {
 	delete(r.eventHandler, code)
 }
 
-func (r *Room) CreateEventHander() map[int]EventHandler {
+func (r *Room) CreateEventHandler() map[int]EventHandler {
 	r.eventHandler = make(map[int]EventHandler)
 	return r.eventHandler
 }

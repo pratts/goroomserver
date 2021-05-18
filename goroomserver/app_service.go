@@ -15,7 +15,7 @@ func (appService *AppService) InitData() {
 	appService.userService = UserService{}
 	appService.userService.InitUserService()
 
-	appService.CreateEventHander()
+	appService.CreateEventHandler()
 }
 
 func (appService *AppService) initExtension() {
@@ -47,7 +47,7 @@ func (appService *AppService) removeEventHandler(code int) {
 	delete(appService.eventHandler, code)
 }
 
-func (appService *AppService) CreateEventHander() map[int]EventHandler {
+func (appService *AppService) CreateEventHandler() map[int]EventHandler {
 	appService.eventHandler = make(map[int]EventHandler)
 	return appService.eventHandler
 }
