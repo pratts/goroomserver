@@ -33,8 +33,9 @@ func (u *User) RemoveRoom(r Room) map[string]Room {
 	return u.roomMap
 }
 
-func (u *User) GetRoomByName(roomName string) Room {
-	return u.GetRoomMap()[roomName]
+func (u *User) GetRoomByName(roomName string) (Room, bool) {
+	room, ok := u.GetRoomMap()[roomName]
+	return room, ok
 }
 
 func (u *User) DisconnectUser() {
@@ -43,6 +44,6 @@ func (u *User) DisconnectUser() {
 	}
 }
 
-func (u *User) SendMessageToUser(payload map[string]interface{}) {
+func (u *User) SendMessageToUser(payload Response) {
 	u.connection.WriteToSocket(payload)
 }

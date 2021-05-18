@@ -21,16 +21,16 @@ import (
 
 var addr = flag.String("addr", "localhost:8080", "http service address")
 
-type test_data struct {
-	Id   int
-	Name string
-}
-
 type Payload struct {
 	AppName   string                 `json:"appName"`
 	RoomName  string                 `json:"roomName"`
 	EventType int                    `json:"eventType"`
 	Payload   map[string]interface{} `json:"payload"`
+}
+
+type Response struct {
+	data map[string]interface{}
+	err  error
 }
 
 func main() {
@@ -55,7 +55,7 @@ func main() {
 		defer close(done)
 		for {
 			log.Println("read data")
-			payload := Payload{}
+			payload := Response{}
 			_, message, err := c.ReadMessage()
 			parseError := json.Unmarshal(message, &payload)
 			if parseError != nil {

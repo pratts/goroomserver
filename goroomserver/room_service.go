@@ -33,8 +33,9 @@ func (rs *RoomService) RemoveRoom(roomName string) {
 	delete(rs.roomMap, roomName)
 }
 
-func (rs *RoomService) GetRoomByName(roomName string) Room {
-	return rs.roomMap[roomName]
+func (rs *RoomService) GetRoomByName(roomName string) (Room, bool) {
+	room, ok := rs.roomMap[roomName]
+	return room, ok
 }
 
 func (rs *RoomService) GetUserForRoom(roomName string) map[string]User {

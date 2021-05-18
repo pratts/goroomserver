@@ -43,8 +43,12 @@ func (webSocketService *WebSocketService) listen(w http.ResponseWriter, r *http.
 	}
 }
 
-func (webSocketService *WebSocketService) WriteToSocket(c *websocket.Conn, payload map[string]interface{}) {
-	err := c.WriteJSON(payload)
+func (webSocketService *WebSocketService) WriteToSocket(c *websocket.Conn, res Response) {
+	data, parseError := json.Marshal(&res)
+	if parseError != nil {
+		log.Println("error in parsing")
+	}
+	err := c.WriteMessage(websocket.TextMessage, data)
 	if err != nil {
 		log.Println("write:", err)
 	}

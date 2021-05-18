@@ -11,6 +11,7 @@ const (
 	RECONNECT        int = 8
 	SUBSCRIBE_ROOM   int = 9
 	UNSUBSCRIBE_ROOM int = 10
+	MESSAGE          int = 11
 )
 
 var eventsText = map[int]string{
@@ -23,6 +24,7 @@ var eventsText = map[int]string{
 	RECONNECT:        "Reconnect",
 	SUBSCRIBE_ROOM:   "Subscribe",
 	UNSUBSCRIBE_ROOM: "Unsubscribe",
+	MESSAGE:          "Message",
 }
 
 func EventText(code int) string {

@@ -42,8 +42,9 @@ func (r *Room) GetMaxUserCount() int {
 	return r.MaxUserCount
 }
 
-func (r *Room) GetUserByName(userName string) User {
-	return r.UsersMap[userName]
+func (r *Room) GetUserByName(userName string) (User, bool) {
+	user, ok := r.UsersMap[userName]
+	return user, ok
 }
 
 func (r *Room) AddUser(u User) map[string]User {
@@ -81,19 +82,23 @@ func (r *Room) CreateEventHander() map[int]EventHandler {
 	return r.eventHandler
 }
 
-func (r *Room) sendResponseToUser(userName string, payload map[string]interface{}) {
-	u := r.GetUserByName(userName)
-	u.SendMessageToUser(payload)
-}
-
-func (r *Room) sendResponseToUserList(userList []string, payload map[string]interface{}) {
-	for i := 0; i < len(userList); i++ {
-		u := r.GetUserByName(userList[i])
+func (r *Room) sendResponseToUser(userName string, payload Response) {
+	u, ok := r.GetUserByName(userName)
+	if ok == true {
 		u.SendMessageToUser(payload)
 	}
 }
 
-func (r *Room) sendResponseToAll(payload map[string]interface{}) {
+func (r *Room) sendResponseToUserList(userList []string, payload Response) {
+	for i := 0; i < len(userList); i++ {
+		u, ok := r.GetUserByName(userList[i])
+		if ok == true {
+			u.SendMessageToUser(payload)
+		}
+	}
+}
+
+func (r *Room) sendResponseToAll(payload Response) {
 	for _, user := range r.UsersMap {
 		user.SendMessageToUser(payload)
 	}

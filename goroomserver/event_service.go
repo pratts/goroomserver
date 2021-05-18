@@ -36,9 +36,9 @@ func (e *EventService) handleEvent(payload Payload) {
 		return
 	}
 
-	payload.RefApp = e.mainService.getAppService(payload.AppName)
+	payload.RefApp, _ = e.mainService.getAppService(payload.AppName)
 	if payload.RoomName != "" {
-		payload.RefRoom = payload.RefApp.roomService.GetRoomByName(payload.RoomName)
+		payload.RefRoom, _ = payload.RefApp.roomService.GetRoomByName(payload.RoomName)
 	}
 
 	event := Event{payload: payload.Payload, refRoom: payload.RefRoom, refApp: payload.RefApp}
@@ -54,6 +54,8 @@ func (e *EventService) handleEvent(payload Payload) {
 		e.handleJoinRoom(payload, event)
 	case LEAVE_ROOM:
 		e.handleLeaveRoom(payload, event)
+	case MESSAGE:
+		e.handleMessage(payload, event)
 	}
 }
 
@@ -79,7 +81,7 @@ func (e *EventService) handleLogin(payload Payload, event Event) {
 	if ok != false {
 		response := evtHandler.handleEvent(event)
 		if response.err != nil {
-
+			return
 		}
 	}
 	_, ok = payload.RefApp.userService.userMap[payload.RemoteAddress]
@@ -96,6 +98,7 @@ func (e *EventService) handleLogout(payload Payload, event Event) {
 		response := evtHandler.handleEvent(event)
 		if response.err != nil {
 			//handle logout error and send event
+			return
 		}
 	}
 
@@ -103,9 +106,65 @@ func (e *EventService) handleLogout(payload Payload, event Event) {
 }
 
 func (e *EventService) handleJoinRoom(payload Payload, event Event) {
+	roomName := payload.Payload["roomName"].(string)
+	if roomName == "" {
+		return
+	}
+	room, ok := payload.RefApp.roomService.GetRoomByName(roomName)
+	if ok == false {
+		return
+	}
+	user := payload.RefApp.userService.connectionUserMap[payload.RemoteAddress]
+	event.user = user
+	handler, evtExists := room.eventHandler[JOIN_ROOM]
+	if evtExists == false {
+		return
+	} else {
+		handler.handleEvent(event)
+	}
+	_, userExists := room.GetUserByName(user.name)
+	if userExists == true {
+		return
+	}
 
+	room.AddUser(user)
 }
 
 func (e *EventService) handleLeaveRoom(payload Payload, event Event) {
+	roomName := payload.Payload["roomName"].(string)
+	if roomName == "" {
+		return
+	}
+	room, ok := payload.RefApp.roomService.GetRoomByName(roomName)
+	if ok == false {
+		return
+	}
+	user := payload.RefApp.userService.connectionUserMap[payload.RemoteAddress]
+	event.user = user
+	handler, evtExists := room.eventHandler[LEAVE_ROOM]
+	if evtExists == false {
+		return
+	} else {
+		handler.handleEvent(event)
+	}
+	_, userExists := room.GetUserByName(user.name)
+	if userExists == true {
+		return
+	}
 
+	room.RemoveUser(user)
+}
+
+func (e *EventService) handleMessage(payload Payload, event Event) {
+	if payload.RoomName != "" {
+		evtHandler, ok := payload.RefRoom.eventHandler[MESSAGE]
+		if ok != false {
+			evtHandler.handleEvent(event)
+			return
+		}
+	}
+	evtHandler, ok := payload.RefApp.eventHandler[MESSAGE]
+	if ok != false {
+		evtHandler.handleEvent(event)
+	}
 }

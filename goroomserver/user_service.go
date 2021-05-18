@@ -24,6 +24,11 @@ func (us *UserService) AddUserConnection(ip string, user User) {
 	us.connectionUserMap[ip] = user
 }
 
+func (us *UserService) GetUserForConnection(ip string, user User) (User, bool) {
+	user, ok := us.connectionUserMap[ip]
+	return user, ok
+}
+
 func (us *UserService) CreateAndAddUser(name string, connection Connection) {
 	us.userCount++
 	user := User{name: name, id: us.userCount, connection: connection}
@@ -39,6 +44,7 @@ func (us *UserService) RemoveUser(userName string) {
 	delete(us.userMap, userName)
 }
 
-func (us *UserService) GetUserByName(userName string) User {
-	return us.userMap[userName]
+func (us *UserService) GetUserByName(userName string) (User, bool) {
+	user, ok := us.userMap[userName]
+	return user, ok
 }

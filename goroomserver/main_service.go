@@ -29,8 +29,9 @@ func (mainService *MainService) createAppService(appName string, extension Exten
 	mainService.appServices[appName] = appService
 }
 
-func (mainService *MainService) getAppService(appName string) AppService {
-	return mainService.appServices[appName]
+func (mainService *MainService) getAppService(appName string) (AppService, bool) {
+	app, ok := mainService.appServices[appName]
+	return app, ok
 }
 
 var mainServiceInstance *MainService
