@@ -13,5 +13,3 @@ func main() {
 	go instance.Init(&wg)
 	wg.Wait()
 }
-
-// var mainService = GetInstance()

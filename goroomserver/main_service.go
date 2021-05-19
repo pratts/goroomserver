@@ -20,7 +20,7 @@ func (mainService *MainService) Init(wg *sync.WaitGroup) {
 	mainService.webSocketService = WebSocketService{
 		eventService: &mainService.eventService,
 	}
-	mainService.webSocketService.StartConnectionService()
+	mainService.webSocketService.StartWebSocketServer()
 }
 
 func (mainService *MainService) createAppService(appName string, extension Extension) {

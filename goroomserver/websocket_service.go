@@ -54,7 +54,7 @@ func (webSocketService *WebSocketService) WriteToSocket(c *websocket.Conn, res R
 	}
 }
 
-func (webSocketService *WebSocketService) StartConnectionService() {
+func (webSocketService *WebSocketService) StartWebSocketServer() {
 	var addr = flag.String("addr", "localhost:8080", "http service address")
 	flag.Parse()
 	log.SetFlags(0)

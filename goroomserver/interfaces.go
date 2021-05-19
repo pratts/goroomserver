@@ -19,3 +19,15 @@ type Event struct {
 	refApp  AppService
 	user    User
 }
+
+type Payload struct {
+	AppName       string                 `json:"appName"`
+	RoomName      string                 `json:"roomName"`
+	EventType     int                    `json:"eventType"`
+	Payload       map[string]interface{} `json:"payload"`
+	RemoteAddress string
+	RefRoom       Room
+	RefApp        AppService
+	Connection    Connection
+	RefUser       User
+}

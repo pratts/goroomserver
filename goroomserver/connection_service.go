@@ -17,7 +17,11 @@ func (connectionService *ConnectionService) Init(eventService *EventService) {
 }
 
 func (connectionService *ConnectionService) addConnection(connection *websocket.Conn) {
-	conn := Connection{Id: connectionService.numConnection + 1, SocketConnection: connection, RemoteAddress: connection.RemoteAddr().String()}
+	conn := Connection{
+		Id:               connectionService.numConnection + 1,
+		SocketConnection: connection,
+		RemoteAddress:    connection.RemoteAddr().String(),
+	}
 	connectionService.numConnection += 1
 	connectionService.connectionMap[connection.RemoteAddr().String()] = conn
 }
