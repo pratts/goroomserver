@@ -23,14 +23,14 @@ func (webSocketService *WebSocketService) listen(w http.ResponseWriter, r *http.
 
 	conn := Connection{Id: 0, SocketConnection: c, RemoteAddress: c.RemoteAddr().String()}
 	payload := Payload{EventType: CONNECTION, Connection: conn}
-	webSocketService.eventService.handleEvent(payload)
+	webSocketService.notifyEventHandler(payload)
 	defer c.Close()
 	for {
 		payload := Payload{}
 		_, message, err := c.ReadMessage()
 		if err != nil {
 			payload := Payload{EventType: DISCONNECTION, RemoteAddress: c.RemoteAddr().String()}
-			webSocketService.eventService.handleEvent(payload)
+			webSocketService.notifyEventHandler(payload)
 			log.Println("Error while reading message:", err)
 			break
 		}
@@ -39,8 +39,12 @@ func (webSocketService *WebSocketService) listen(w http.ResponseWriter, r *http.
 			log.Println("Error while parsing data:", parseError)
 		}
 		payload.RemoteAddress = c.RemoteAddr().String()
-		webSocketService.eventService.handleEvent(payload)
+		webSocketService.notifyEventHandler(payload)
 	}
+}
+
+func (webSocketService *WebSocketService) notifyEventHandler(payload Payload) {
+	go webSocketService.eventService.handleEvent(payload)
 }
 
 func (webSocketService *WebSocketService) WriteToSocket(c *websocket.Conn, res Response) {

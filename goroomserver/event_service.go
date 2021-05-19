@@ -18,7 +18,7 @@ func (e *EventService) handleEvent(payload Payload) {
 		return
 	}
 
-	payload.Connection = e.mainService.connectionService.connectionMap[payload.RemoteAddress]
+	payload.Connection, _ = e.mainService.connectionService.getConnectionByIp(payload.RemoteAddress)
 
 	if payload.AppName == "" {
 		return
@@ -52,7 +52,10 @@ func (e *EventService) handleConnection(payload Payload) {
 }
 
 func (e *EventService) handleDisconnection(payload Payload, event Event) {
-	user := payload.RefApp.userService.connectionUserMap[payload.RemoteAddress]
+	user, ok := payload.RefApp.userService.GetUserForConnection(payload.RemoteAddress)
+	if ok == false {
+		return
+	}
 	for _, room := range user.roomMap {
 		evtHandler, ok := room.eventHandler[DISCONNECTION]
 		if ok == false {
@@ -77,7 +80,7 @@ func (e *EventService) handleLogin(payload Payload, event Event) {
 		//handle login duplicate and send event
 		return
 	}
-	payload.RefApp.userService.CreateAndAddUser(payload.Payload["username"].(string), e.mainService.connectionService.connectionMap[payload.RemoteAddress])
+	payload.RefApp.userService.CreateAndAddUser(payload.Payload["username"].(string), payload.Connection)
 }
 
 func (e *EventService) handleLogout(payload Payload, event Event) {
@@ -102,7 +105,7 @@ func (e *EventService) handleJoinRoom(payload Payload, event Event) {
 	if ok == false {
 		return
 	}
-	user := payload.RefApp.userService.connectionUserMap[payload.RemoteAddress]
+	user, _ := payload.RefApp.userService.GetUserForConnection(payload.RemoteAddress)
 	event.user = user
 	handler, evtExists := room.eventHandler[JOIN_ROOM]
 	if evtExists == false {
@@ -127,7 +130,7 @@ func (e *EventService) handleLeaveRoom(payload Payload, event Event) {
 	if ok == false {
 		return
 	}
-	user := payload.RefApp.userService.connectionUserMap[payload.RemoteAddress]
+	user, _ := payload.RefApp.userService.GetUserForConnection(payload.RemoteAddress)
 	event.user = user
 	handler, evtExists := room.eventHandler[LEAVE_ROOM]
 	if evtExists == false {

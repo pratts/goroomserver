@@ -24,7 +24,7 @@ func (us *UserService) AddUserConnection(ip string, user User) {
 	us.connectionUserMap[ip] = user
 }
 
-func (us *UserService) GetUserForConnection(ip string, user User) (User, bool) {
+func (us *UserService) GetUserForConnection(ip string) (User, bool) {
 	user, ok := us.connectionUserMap[ip]
 	return user, ok
 }

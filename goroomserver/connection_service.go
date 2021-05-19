@@ -35,3 +35,8 @@ func (connectionService *ConnectionService) addConnectionInstance(conn Connectio
 func (connectionService *ConnectionService) removeConnection(remoteAddress string) {
 	delete(connectionService.connectionMap, remoteAddress)
 }
+
+func (connectionService *ConnectionService) getConnectionByIp(remoteAddress string) (Connection, bool) {
+	connection, ok := connectionService.connectionMap[remoteAddress]
+	return connection, ok
+}
