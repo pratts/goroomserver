@@ -14,11 +14,11 @@ func (c *Connection) GetId() int {
 	return c.Id
 }
 
-func (c *Connection) getConnection() *websocket.Conn {
+func (c *Connection) GetConnection() *websocket.Conn {
 	return c.SocketConnection
 }
 
-func (c *Connection) getRemoteAddress() string {
+func (c *Connection) GetRemoteAddress() string {
 	return c.RemoteAddress
 }
 

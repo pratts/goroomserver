@@ -40,7 +40,7 @@ func (u *User) GetRoomByName(roomName string) (Room, bool) {
 
 func (u *User) DisconnectUser() {
 	for _, room := range u.roomMap {
-		room.RemoveUser(*u)
+		room.removeUser(*u)
 	}
 }
 

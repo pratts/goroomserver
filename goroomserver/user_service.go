@@ -33,7 +33,7 @@ func (us *UserService) CreateAndAddUser(name string, connection Connection) {
 	us.userCount++
 	user := User{name: name, id: us.userCount, connection: &connection}
 	us.AddUser(user)
-	us.AddUserConnection(connection.getRemoteAddress(), user)
+	us.AddUserConnection(connection.GetRemoteAddress(), user)
 }
 
 func (us *UserService) RemoveUser(userName string) {

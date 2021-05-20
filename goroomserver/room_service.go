@@ -14,19 +14,19 @@ func (rs *RoomService) GetRoomMap() map[string]Room {
 	return rs.roomMap
 }
 
-func (rs *RoomService) CreateRoom(roomName string, maxUsers int, extension Extension) Room {
-	room := Room{Id: rs.numRoomsCreated + 1, Name: roomName, MaxUserCount: maxUsers, Extension: extension}
+func (rs *RoomService) createRoom(roomName string, maxUsers int, extension Extension) Room {
+	room := Room{id: rs.numRoomsCreated + 1, name: roomName, maxUserCount: maxUsers, extension: extension}
 	room.InitRoomData()
 	rs.numRoomsCreated += 1
-	rs.AddRoom(room)
+	rs.addRoom(room)
 	return room
 }
 
-func (rs *RoomService) AddRoom(room Room) {
+func (rs *RoomService) addRoom(room Room) {
 	rs.roomMap[room.GetRoomName()] = room
 }
 
-func (rs *RoomService) RemoveRoom(roomName string) {
+func (rs *RoomService) removeRoom(roomName string) {
 	room, ok := rs.roomMap[roomName]
 	if ok == true {
 		room.RemoveAllUsers()
@@ -34,12 +34,12 @@ func (rs *RoomService) RemoveRoom(roomName string) {
 	delete(rs.roomMap, roomName)
 }
 
-func (rs *RoomService) GetRoomByName(roomName string) (Room, bool) {
+func (rs *RoomService) getRoomByName(roomName string) (Room, bool) {
 	room, ok := rs.roomMap[roomName]
 	return room, ok
 }
 
-func (rs *RoomService) GetUserForRoom(roomName string) map[string]User {
+func (rs *RoomService) getUserForRoom(roomName string) map[string]User {
 	room, ok := rs.roomMap[roomName]
 	if ok == true {
 		return room.GetUserMap()

@@ -7,13 +7,11 @@ import (
 type ConnectionService struct {
 	connectionMap map[string]Connection
 	numConnection int
-	eventService  EventService
 }
 
-func (connectionService *ConnectionService) Init(eventService *EventService) {
+func (connectionService *ConnectionService) Init() {
 	connectionService.numConnection = 0
 	connectionService.connectionMap = make(map[string]Connection)
-	connectionService.eventService = *eventService
 }
 
 func (connectionService *ConnectionService) addConnection(connection *websocket.Conn) {
@@ -36,7 +34,15 @@ func (connectionService *ConnectionService) removeConnection(remoteAddress strin
 	delete(connectionService.connectionMap, remoteAddress)
 }
 
-func (connectionService *ConnectionService) getConnectionByIp(remoteAddress string) (Connection, bool) {
+func (connectionService *ConnectionService) GetConnectionByIp(remoteAddress string) (Connection, bool) {
 	connection, ok := connectionService.connectionMap[remoteAddress]
 	return connection, ok
+}
+
+func (connectionService *ConnectionService) GetNumConnection() int {
+	return connectionService.numConnection
+}
+
+func (connectionService *ConnectionService) GetConnectionMap() map[string]Connection {
+	return connectionService.connectionMap
 }

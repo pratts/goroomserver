@@ -18,15 +18,15 @@ func (e *EventService) handleEvent(payload Payload) {
 		return
 	}
 
-	payload.Connection, _ = e.mainService.connectionService.getConnectionByIp(payload.RemoteAddress)
+	payload.Connection, _ = e.mainService.connectionService.GetConnectionByIp(payload.RemoteAddress)
 
 	if payload.AppName == "" {
 		return
 	}
 
-	payload.RefApp, _ = e.mainService.getAppService(payload.AppName)
+	payload.RefApp, _ = e.mainService.GetAppService(payload.AppName)
 	if payload.RoomName != "" {
-		payload.RefRoom, _ = payload.RefApp.roomService.GetRoomByName(payload.RoomName)
+		payload.RefRoom, _ = payload.RefApp.GetRoomByName(payload.RoomName)
 	}
 
 	event := Event{payload: payload.Payload, refRoom: payload.RefRoom, refApp: payload.RefApp}
@@ -101,7 +101,7 @@ func (e *EventService) handleJoinRoom(payload Payload, event Event) {
 	if roomName == "" {
 		return
 	}
-	room, ok := payload.RefApp.roomService.GetRoomByName(roomName)
+	room, ok := payload.RefApp.GetRoomByName(roomName)
 	if ok == false {
 		return
 	}
@@ -118,7 +118,7 @@ func (e *EventService) handleJoinRoom(payload Payload, event Event) {
 		return
 	}
 
-	room.AddUser(user)
+	room.addUser(user)
 }
 
 func (e *EventService) handleLeaveRoom(payload Payload, event Event) {
@@ -126,7 +126,7 @@ func (e *EventService) handleLeaveRoom(payload Payload, event Event) {
 	if roomName == "" {
 		return
 	}
-	room, ok := payload.RefApp.roomService.GetRoomByName(roomName)
+	room, ok := payload.RefApp.GetRoomByName(roomName)
 	if ok == false {
 		return
 	}
@@ -143,7 +143,7 @@ func (e *EventService) handleLeaveRoom(payload Payload, event Event) {
 		return
 	}
 
-	room.RemoveUser(user)
+	room.removeUser(user)
 }
 
 func (e *EventService) handleMessage(payload Payload, event Event) {
@@ -162,7 +162,7 @@ func (e *EventService) handleMessage(payload Payload, event Event) {
 
 func (e *EventService) pushMessage(payload Payload, response Response) {
 	if payload.RemoteAddress != "" {
-		connection, ok := e.mainService.connectionService.getConnectionByIp(payload.RemoteAddress)
+		connection, ok := e.mainService.connectionService.GetConnectionByIp(payload.RemoteAddress)
 		if ok == false {
 			return
 		}

@@ -15,7 +15,7 @@ func (mainService *MainService) Init(wg *sync.WaitGroup) {
 	defer wg.Done()
 	mainService.eventService = EventService{mainService: mainService}
 	mainService.connectionService = ConnectionService{}
-	mainService.connectionService.Init(&mainService.eventService)
+	mainService.connectionService.Init()
 
 	mainService.webSocketService = WebSocketService{
 		eventService: &mainService.eventService,
@@ -23,13 +23,13 @@ func (mainService *MainService) Init(wg *sync.WaitGroup) {
 	mainService.webSocketService.StartWebSocketServer()
 }
 
-func (mainService *MainService) createAppService(appName string, extension Extension) {
-	appService := AppService{Name: appName, Extension: extension}
+func (mainService *MainService) CreateAppService(appName string, extension Extension) {
+	appService := AppService{name: appName, extension: extension}
 	appService.InitData()
 	mainService.appServices[appName] = appService
 }
 
-func (mainService *MainService) getAppService(appName string) (AppService, bool) {
+func (mainService *MainService) GetAppService(appName string) (AppService, bool) {
 	app, ok := mainService.appServices[appName]
 	return app, ok
 }

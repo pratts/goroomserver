@@ -1,71 +1,71 @@
 package goroomserver
 
 type Room struct {
-	Id           int
-	Name         string
-	UsersMap     map[string]User
-	MaxUserCount int
+	id           int
+	name         string
+	usersMap     map[string]User
+	maxUserCount int
 	eventHandler map[int]EventHandler
-	Extension    Extension
+	extension    Extension
 }
 
 func (r *Room) InitRoomData() {
-	r.CreateUserMap()
-	r.CreateEventHandler()
+	r.createUserMap()
+	r.createEventHandler()
 	r.initExtension()
 }
 
 func (r *Room) initExtension() {
 	payload := make(map[string]interface{})
 	payload["room"] = r
-	r.Extension.init(payload)
+	r.extension.init(payload)
 }
 
 func (r *Room) GetId() int {
-	return r.Id
+	return r.id
 }
 
 func (r *Room) GetRoomName() string {
-	return r.Name
+	return r.name
 }
 
-func (r *Room) CreateUserMap() map[string]User {
-	r.UsersMap = make(map[string]User)
-	return r.UsersMap
+func (r *Room) createUserMap() map[string]User {
+	r.usersMap = make(map[string]User)
+	return r.usersMap
 }
 
 func (r *Room) GetUserMap() map[string]User {
-	return r.UsersMap
+	return r.usersMap
 }
 
 func (r *Room) GetMaxUserCount() int {
-	return r.MaxUserCount
+	return r.maxUserCount
 }
 
 func (r *Room) GetUserByName(userName string) (User, bool) {
-	user, ok := r.UsersMap[userName]
+	user, ok := r.usersMap[userName]
 	return user, ok
 }
 
-func (r *Room) AddUser(u User) map[string]User {
-	r.UsersMap[u.name] = u
+func (r *Room) addUser(u User) map[string]User {
+	r.usersMap[u.name] = u
 	u.AddRoom(*r)
-	return r.UsersMap
+	return r.usersMap
 }
 
-func (r *Room) RemoveUser(u User) map[string]User {
+func (r *Room) removeUser(u User) map[string]User {
 	u.RemoveRoom(*r)
-	delete(r.UsersMap, u.GetName())
-	return r.UsersMap
+	delete(r.usersMap, u.GetName())
+	return r.usersMap
 }
 
 func (r *Room) ClearUsers() map[string]User {
-	return r.CreateUserMap()
+	return r.createUserMap()
 }
 
 func (r *Room) RemoveAllUsers() {
-	for _, user := range r.UsersMap {
-		r.RemoveUser(user)
+	for _, user := range r.usersMap {
+		r.removeUser(user)
 	}
 }
 
@@ -77,9 +77,17 @@ func (r *Room) removeEventHandler(code int) {
 	delete(r.eventHandler, code)
 }
 
-func (r *Room) CreateEventHandler() map[int]EventHandler {
+func (r *Room) createEventHandler() map[int]EventHandler {
 	r.eventHandler = make(map[int]EventHandler)
 	return r.eventHandler
+}
+
+func (r *Room) getEventHandler() map[int]EventHandler {
+	return r.eventHandler
+}
+
+func (r *Room) getExtension() Extension {
+	return r.extension
 }
 
 func (r *Room) sendResponseToUser(userName string, payload Response) {
@@ -99,7 +107,7 @@ func (r *Room) sendResponseToUserList(userList []string, payload Response) {
 }
 
 func (r *Room) sendResponseToAll(payload Response) {
-	for _, user := range r.UsersMap {
+	for _, user := range r.usersMap {
 		user.SendMessageToUser(payload)
 	}
 }
