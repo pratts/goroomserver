@@ -52,6 +52,6 @@ func (appService *AppService) CreateEventHandler() map[int]EventHandler {
 	return appService.eventHandler
 }
 
-func (appService *AppService) HandleEvent(payload map[string]interface{}) {
-
+func (appService *AppService) createRoom(roomName string, maxUsers int, extension Extension) Room {
+	return appService.roomService.CreateRoom(roomName, maxUsers, extension)
 }

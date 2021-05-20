@@ -14,11 +14,12 @@ func (rs *RoomService) GetRoomMap() map[string]Room {
 	return rs.roomMap
 }
 
-func (rs *RoomService) CreateRoom(roomName string, maxUsers int, extension Extension) {
+func (rs *RoomService) CreateRoom(roomName string, maxUsers int, extension Extension) Room {
 	room := Room{Id: rs.numRoomsCreated + 1, Name: roomName, MaxUserCount: maxUsers, Extension: extension}
 	room.InitRoomData()
 	rs.numRoomsCreated += 1
 	rs.AddRoom(room)
+	return room
 }
 
 func (rs *RoomService) AddRoom(room Room) {
