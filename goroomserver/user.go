@@ -4,7 +4,7 @@ type User struct {
 	id         int
 	name       string
 	roomMap    map[string]Room
-	connection Connection
+	connection *Connection
 }
 
 func (u *User) GetId() int {
@@ -19,7 +19,7 @@ func (u *User) GetRoomMap() map[string]Room {
 	return u.roomMap
 }
 
-func (u *User) GetConnection() Connection {
+func (u *User) GetConnection() *Connection {
 	return u.connection
 }
 

@@ -159,3 +159,15 @@ func (e *EventService) handleMessage(payload Payload, event Event) {
 		evtHandler.handleEvent(event)
 	}
 }
+
+func (e *EventService) pushMessage(payload Payload, response Response) {
+	if payload.RemoteAddress != "" {
+		connection, ok := e.mainService.connectionService.getConnectionByIp(payload.RemoteAddress)
+		if ok == false {
+			return
+		}
+		connection.WriteToSocket(response)
+	} else if payload.Connection != (Connection{}) {
+		payload.Connection.WriteToSocket(response)
+	}
+}
