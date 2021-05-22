@@ -61,7 +61,8 @@ func (appService *AppService) CreateEventHandler() map[int]EventHandler {
 }
 
 func (appService *AppService) CreateRoom(roomName string, maxUsers int, extension Extension) Room {
-	return appService.roomService.createRoom(roomName, maxUsers, extension)
+	room := appService.roomService.createRoom(roomName, maxUsers, extension)
+	return room
 }
 
 func (appService *AppService) RemoveRoom(roomName string) {
