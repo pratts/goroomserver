@@ -43,6 +43,7 @@ const (
 	USER_NOT_IN_ROOM       int = 9
 	INVALID_EVENT          int = 10
 	SERVER_ERROR           int = 500
+	SUCCESS                int = 200
 )
 
 var ErrorMessages = map[int]string{

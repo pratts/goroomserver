@@ -1,7 +1,7 @@
 package goroomserver
 
 type Extension interface {
-	init(map[string]interface{})
+	init(Event)
 }
 
 type EventHandler interface {
@@ -10,19 +10,19 @@ type EventHandler interface {
 
 type Response struct {
 	data  map[string]interface{}
+	code  int
 	error ServerError
 }
 
 type ServerError struct {
 	code    int
 	message string
-	err     error
 }
 
 type Event struct {
 	payload map[string]interface{}
-	refRoom Room
-	refApp  AppService
+	room    Room
+	app     AppService
 	user    User
 }
 

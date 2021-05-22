@@ -19,10 +19,9 @@ func (e *EventService) handleEvent(payload Payload) {
 	}
 
 	payload.Connection, _ = e.mainService.connectionService.GetConnectionByIp(payload.RemoteAddress)
-	response := Response{}
 
 	if payload.AppName == "" {
-		response.error = ServerError{code: APP_NAME_INVALID, message: ErrorMessages[APP_NAME_INVALID]}
+		response := Response{code: SERVER_ERROR, error: ServerError{code: APP_NAME_INVALID, message: ErrorMessages[APP_NAME_INVALID]}}
 		e.pushMessage(payload, response)
 		return
 	}
@@ -32,37 +31,40 @@ func (e *EventService) handleEvent(payload Payload) {
 		payload.RefRoom, _ = payload.RefApp.GetRoomByName(payload.RoomName)
 	}
 
-	event := Event{payload: payload.Payload, refRoom: payload.RefRoom, refApp: payload.RefApp}
+	event := Event{payload: payload.Payload, room: payload.RefRoom, app: payload.RefApp}
 
 	user := getValidUser(payload)
 	if (User{}.name) == user.name {
-		response.error = ServerError{code: USER_NOT_EXISTS, message: ErrorMessages[USER_NOT_EXISTS]}
+		response := Response{code: SERVER_ERROR, error: ServerError{code: USER_NOT_EXISTS, message: ErrorMessages[USER_NOT_EXISTS]}}
 		e.pushMessage(payload, response)
 		return
 	}
 	payload.RefUser = user
 	event.user = user
 
+	response := Response{code: SUCCESS}
+
 	switch payload.EventType {
 	case DISCONNECTION:
-		e.handleDisconnection(payload, event)
+		e.handleDisconnection(payload, event, &response)
 		break
 	case LOGIN:
-		e.handleLogin(payload, event)
+		e.handleLogin(payload, event, &response)
 		break
 	case LOGOUT:
-		e.handleLogout(payload, event)
+		e.handleLogout(payload, event, &response)
 		break
 	case JOIN_ROOM:
-		e.handleJoinRoom(payload, event)
+		e.handleJoinRoom(payload, event, &response)
 		break
 	case LEAVE_ROOM:
-		e.handleLeaveRoom(payload, event)
+		e.handleLeaveRoom(payload, event, &response)
 		break
 	case MESSAGE:
-		e.handleMessage(payload, event)
+		e.handleMessage(payload, event, &response)
 		break
 	default:
+		response.code = SERVER_ERROR
 		response.error = ServerError{code: INVALID_EVENT, message: ErrorMessages[INVALID_EVENT]}
 		e.pushMessage(payload, response)
 	}
@@ -72,11 +74,13 @@ func (e *EventService) handleConnection(payload Payload) {
 	e.mainService.connectionService.addConnectionInstance(payload.Connection)
 }
 
-func (e *EventService) handleDisconnection(payload Payload, event Event) {
+func (e *EventService) handleDisconnection(payload Payload, event Event, response *Response) {
 	user := payload.RefUser
 	disconnectionHandler, ok := payload.RefApp.eventHandler[DISCONNECTION]
 	if ok == true {
-		disconnectionHandler.handleEvent(event)
+		_, error := disconnectionHandler.handleEvent(event)
+		response.error = ServerError{code: SERVER_ERROR, message: error.Error()}
+		return
 	}
 	for _, room := range user.roomMap {
 		evtHandler, ok := room.eventHandler[DISCONNECTION]
@@ -89,50 +93,58 @@ func (e *EventService) handleDisconnection(payload Payload, event Event) {
 	e.mainService.connectionService.removeConnection(payload.RemoteAddress)
 }
 
-func (e *EventService) handleLogin(payload Payload, event Event) {
+func (e *EventService) handleLogin(payload Payload, event Event, response *Response) {
 	evtHandler, ok := payload.RefApp.eventHandler[LOGIN]
 	if ok != false {
-		_, error := evtHandler.handleEvent(event)
+		res, error := evtHandler.handleEvent(event)
 		if error != nil {
+			response = &res
 			return
 		}
 	}
 	_, ok = payload.RefApp.userService.userMap[payload.RemoteAddress]
 	if ok == true {
-		//handle login duplicate and send event
+		response.code = SERVER_ERROR
+		response.error = ServerError{code: USER_ALREADY_IN_ROOM, message: ErrorMessages[USER_ALREADY_LOGGED_IN]}
 		return
 	}
 	payload.RefApp.userService.CreateAndAddUser(payload.Payload["username"].(string), payload.Connection)
 }
 
-func (e *EventService) handleLogout(payload Payload, event Event) {
+func (e *EventService) handleLogout(payload Payload, event Event, response *Response) {
 	evtHandler, ok := payload.RefApp.eventHandler[LOGOUT]
 	if ok != false {
-		response, error := evtHandler.handleEvent(event)
+		res, error := evtHandler.handleEvent(event)
 		if error != nil {
+			response = &res
 			//handle logout error and send event
 			return
 		}
 	}
 
-	e.handleDisconnection(payload, event)
+	e.handleDisconnection(payload, event, response)
 }
 
-func (e *EventService) handleJoinRoom(payload Payload, event Event) {
+func (e *EventService) handleJoinRoom(payload Payload, event Event, response *Response) {
 	roomName := payload.Payload["roomName"].(string)
 	if roomName == "" {
-		//handle case when roomname is blank
+		response.code = SERVER_ERROR
+		response.error = ServerError{code: ROOM_NAME_INVALID, message: ErrorMessages[ROOM_NAME_INVALID]}
 		return
 	}
 	room, ok := payload.RefApp.GetRoomByName(roomName)
 	if ok == false {
 		//handle case when room does not exist
+		response.code = SERVER_ERROR
+		response.error = ServerError{code: ROOM_NOT_EXISTS, message: ErrorMessages[ROOM_NOT_EXISTS]}
 		return
 	}
 	user := payload.RefUser
 	_, userExists := room.GetUserByName(user.name)
 	if userExists == true {
 		//handle case when user already is in room
+		response.code = SERVER_ERROR
+		response.error = ServerError{code: USER_ALREADY_IN_ROOM, message: ErrorMessages[USER_ALREADY_IN_ROOM]}
 		return
 	}
 
@@ -144,15 +156,19 @@ func (e *EventService) handleJoinRoom(payload Payload, event Event) {
 	room.addUser(user)
 }
 
-func (e *EventService) handleLeaveRoom(payload Payload, event Event) {
+func (e *EventService) handleLeaveRoom(payload Payload, event Event, response *Response) {
 	roomName := payload.Payload["roomName"].(string)
 	if roomName == "" {
 		//handle case when roomname is blank
+		response.code = SERVER_ERROR
+		response.error = ServerError{code: ROOM_NAME_INVALID, message: ErrorMessages[ROOM_NAME_INVALID]}
 		return
 	}
 	room, ok := payload.RefApp.GetRoomByName(roomName)
 	if ok == false {
 		//handle case when room does not exist
+		response.code = SERVER_ERROR
+		response.error = ServerError{code: ROOM_NOT_EXISTS, message: ErrorMessages[ROOM_NOT_EXISTS]}
 		return
 	}
 	user := payload.RefUser
@@ -161,6 +177,8 @@ func (e *EventService) handleLeaveRoom(payload Payload, event Event) {
 	_, userExists := room.GetUserByName(user.name)
 	if userExists == false {
 		//handle case when user already is not in room
+		response.code = SERVER_ERROR
+		response.error = ServerError{code: USER_NOT_IN_ROOM, message: ErrorMessages[USER_NOT_IN_ROOM]}
 		return
 	}
 
@@ -170,7 +188,7 @@ func (e *EventService) handleLeaveRoom(payload Payload, event Event) {
 	room.removeUser(user)
 }
 
-func (e *EventService) handleMessage(payload Payload, event Event) {
+func (e *EventService) handleMessage(payload Payload, event Event, response *Response) {
 	if payload.RoomName != "" {
 		evtHandler, ok := payload.RefRoom.eventHandler[MESSAGE]
 		if ok != false {
@@ -185,6 +203,9 @@ func (e *EventService) handleMessage(payload Payload, event Event) {
 }
 
 func (e *EventService) pushMessage(payload Payload, response Response) {
+	response.data = payload.Payload
+	response.data["roomName"] = payload.RoomName
+	response.data["appName"] = payload.AppName
 	if payload.RemoteAddress != "" {
 		connection, ok := e.mainService.connectionService.GetConnectionByIp(payload.RemoteAddress)
 		if ok == false {

@@ -16,9 +16,8 @@ func (r *Room) InitRoomData() {
 }
 
 func (r *Room) initExtension() {
-	payload := make(map[string]interface{})
-	payload["room"] = r
-	r.extension.init(payload)
+	event := Event{room: *r}
+	r.extension.init(event)
 }
 
 func (r *Room) GetId() int {

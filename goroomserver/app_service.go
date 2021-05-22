@@ -23,8 +23,8 @@ func (appService *AppService) GetName() string {
 }
 
 func (appService *AppService) initExtension() {
-	payload := make(map[string]interface{})
-	appService.extension.init(payload)
+	event := Event{app: *appService}
+	appService.extension.init(event)
 }
 
 func (appService *AppService) setExtension(extension *Extension) {
