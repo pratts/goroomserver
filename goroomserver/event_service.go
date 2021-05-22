@@ -19,8 +19,11 @@ func (e *EventService) handleEvent(payload Payload) {
 	}
 
 	payload.Connection, _ = e.mainService.connectionService.GetConnectionByIp(payload.RemoteAddress)
+	response := Response{}
 
 	if payload.AppName == "" {
+		response.error = ServerError{code: APP_NAME_INVALID, message: ErrorMessages[APP_NAME_INVALID]}
+		e.pushMessage(payload, response)
 		return
 	}
 
@@ -33,6 +36,8 @@ func (e *EventService) handleEvent(payload Payload) {
 
 	user := getValidUser(payload)
 	if (User{}.name) == user.name {
+		response.error = ServerError{code: USER_NOT_EXISTS, message: ErrorMessages[USER_NOT_EXISTS]}
+		e.pushMessage(payload, response)
 		return
 	}
 	payload.RefUser = user
@@ -41,16 +46,25 @@ func (e *EventService) handleEvent(payload Payload) {
 	switch payload.EventType {
 	case DISCONNECTION:
 		e.handleDisconnection(payload, event)
+		break
 	case LOGIN:
 		e.handleLogin(payload, event)
+		break
 	case LOGOUT:
 		e.handleLogout(payload, event)
+		break
 	case JOIN_ROOM:
 		e.handleJoinRoom(payload, event)
+		break
 	case LEAVE_ROOM:
 		e.handleLeaveRoom(payload, event)
+		break
 	case MESSAGE:
 		e.handleMessage(payload, event)
+		break
+	default:
+		response.error = ServerError{code: INVALID_EVENT, message: ErrorMessages[INVALID_EVENT]}
+		e.pushMessage(payload, response)
 	}
 }
 
@@ -78,8 +92,8 @@ func (e *EventService) handleDisconnection(payload Payload, event Event) {
 func (e *EventService) handleLogin(payload Payload, event Event) {
 	evtHandler, ok := payload.RefApp.eventHandler[LOGIN]
 	if ok != false {
-		response := evtHandler.handleEvent(event)
-		if response.err != nil {
+		_, error := evtHandler.handleEvent(event)
+		if error != nil {
 			return
 		}
 	}
@@ -94,8 +108,8 @@ func (e *EventService) handleLogin(payload Payload, event Event) {
 func (e *EventService) handleLogout(payload Payload, event Event) {
 	evtHandler, ok := payload.RefApp.eventHandler[LOGOUT]
 	if ok != false {
-		response := evtHandler.handleEvent(event)
-		if response.err != nil {
+		response, error := evtHandler.handleEvent(event)
+		if error != nil {
 			//handle logout error and send event
 			return
 		}

@@ -5,12 +5,18 @@ type Extension interface {
 }
 
 type EventHandler interface {
-	handleEvent(Event) Response
+	handleEvent(Event) (Response, error)
 }
 
 type Response struct {
-	data map[string]interface{}
-	err  error
+	data  map[string]interface{}
+	error ServerError
+}
+
+type ServerError struct {
+	code    int
+	message string
+	err     error
 }
 
 type Event struct {
