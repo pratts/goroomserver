@@ -37,5 +37,8 @@ The server consists of multiple components:
     4. Client side libraries
     5. Server side application example
 
+### Note:
+    The logic to start websocket server is blocking. Either start the websocket at the end, after you've initiated everything or start it in a separate goroutine.
+
 ### Credits
 The server users the [Gorilla-Websocket](https://github.com/gorilla/websocket) library for websocket implementation.
