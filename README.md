@@ -31,7 +31,7 @@ Events:
 
 App
 
-    - App Handler
+    - App EventHandler
     - Event Handlers
     - Room List
     - Users
