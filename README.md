@@ -1,55 +1,34 @@
-This project is based on features for app+chat room in each app.
+# Go Room Server
+Go Room Server is a [Golang](http://golang.org/) based server with websocket functionality using [Gorilla-Websocket](https://github.com/gorilla/websocket).
 
+### Description
+The server provides the functionality to create multiple applications acting as namespaces. Each application consists of list of rooms and connected users.
+Users connect using either custom websocket implementation or the goroomserver libraries [Go-Room-Client-JS](https://github.com/pratts/goroomclient-js) and [Go-Room-Client-Go](https://github.com/pratts/goroomclient-go) coming soon.
 
-Design Schema:
-    
-    1. App that works as a container for the project. Multiple apps can be deployed on the same server,
-       with each one having its own configuration
-    2. Each app will have its main extension file that'll act as the entry points for the app.
-    3. Each app will have its own room list.
-    4. Each room in an app will have an event handler and can have its own userlist.
-    5. User will have to login to app to be able to continue further and join rooms
+### Installation
+    go get github.com/pratts/goroomserver
 
-Models:
+### Concept
+The server consists of multiple components:
 
-    - App
-    - Room
-    - User
-    - Connection
+    1. A main server that will contain a map of applications associated with the application name.
+    2. Each application will contain room and user services consisting of rooms created and logged in users.
+    3. Each room will contain a map of users against their names who have joined the room.
+    4. Each user will have a connection reference to use for communication and the rooms user has joined.
+    5. Each application and room will have an extension with init method that'll be called after successful 
+       initialization of application and room respectively.
+    6. Server works with various events that are triggered either from server or client.
+    7. Each application and room will have a map of event handlers. On each
+       event getting triggered, the respective event handler's handleEvent method will be called with appropriate
+       parameters.
+    8. Following is the list of event that are currently handled on server end:
+        a.) Connection
+        b.) Disconnection
+        c.) Login
+        d.) Logout
+        e.) Join Room
+        f.) Leave Room
+        g.) Message
 
-Events:
-
-    - Login
-    - Logout
-    - Join App
-    - Subscribe App
-    - Join Room
-    - Leave Room
-    - Disconnect
-    - Reconnect
-    - Connection
-
-App
-
-    - App EventHandler
-    - Event Handlers
-    - Room List
-    - Users
-
-User
-
-    - id
-    - username
-    - roomlist
-    - connection
-
-Room
-
-    - Event Handlers
-    - Users
-
-Connection
-
-    - id
-    - ip
-    - port
+### Credits
+The server users the [Gorilla-Websocket](https://github.com/gorilla/websocket) library for websocket implementation.
