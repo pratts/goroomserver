@@ -7,9 +7,10 @@ import (
 )
 
 func main() {
+	instance := goroomserver.GetInstance()
+	instance.Init()
 	var wg sync.WaitGroup
 	wg.Add(1)
-	instance := goroomserver.GetInstance()
-	go instance.Init(&wg)
+	go instance.StartServer(&wg)
 	wg.Wait()
 }

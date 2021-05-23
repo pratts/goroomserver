@@ -3,6 +3,7 @@ package goroomserver
 import (
 	"encoding/json"
 	"flag"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -58,10 +59,11 @@ func (webSocketService *WebSocketService) WriteToSocket(c *websocket.Conn, res R
 	}
 }
 
-func (webSocketService *WebSocketService) StartWebSocketServer() {
-	var addr = flag.String("addr", "localhost:8080", "http service address")
+func (webSocketService *WebSocketService) startWebSocketServer(config *ServerConfig) {
+	var url = fmt.Sprintf("%s:%d", config.getHost(), config.getPort())
+	var addr = flag.String("addr", url, "http service address")
 	flag.Parse()
 	log.SetFlags(0)
-	http.HandleFunc("/", webSocketService.listen)
+	http.HandleFunc(config.getRequestPattern(), webSocketService.listen)
 	log.Fatal(http.ListenAndServe(*addr, nil))
 }

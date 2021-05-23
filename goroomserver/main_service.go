@@ -1,6 +1,9 @@
 package goroomserver
 
 import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"sync"
 )
 
@@ -9,10 +12,11 @@ type MainService struct {
 	eventService      EventService
 	appServices       map[string]AppService
 	webSocketService  WebSocketService
+	serverConfig      ServerConfig
 }
 
-func (mainService *MainService) Init(wg *sync.WaitGroup) {
-	defer wg.Done()
+func (mainService *MainService) Init() {
+	mainService.loadConfigFile()
 	mainService.eventService = EventService{mainService: mainService}
 	mainService.connectionService = ConnectionService{}
 	mainService.connectionService.Init()
@@ -20,7 +24,6 @@ func (mainService *MainService) Init(wg *sync.WaitGroup) {
 	mainService.webSocketService = WebSocketService{
 		eventService: &mainService.eventService,
 	}
-	mainService.webSocketService.StartWebSocketServer()
 }
 
 func (mainService *MainService) CreateAppService(appName string, extension Extension) {
@@ -32,6 +35,26 @@ func (mainService *MainService) CreateAppService(appName string, extension Exten
 func (mainService *MainService) GetAppService(appName string) (AppService, bool) {
 	app, ok := mainService.appServices[appName]
 	return app, ok
+}
+
+func (mainService *MainService) StartServer(wg *sync.WaitGroup) {
+	defer wg.Done()
+	mainService.webSocketService.startWebSocketServer(&mainService.serverConfig)
+}
+
+func (mainService *MainService) loadConfigFile() {
+	data, err := ioutil.ReadFile("config/server.json")
+	fmt.Println("load data:", data)
+	if err != nil {
+		fmt.Println("Error parsing:", err.Error())
+	}
+
+	err = json.Unmarshal(data, &(mainService.serverConfig))
+	fmt.Println("err:", err)
+	if err != nil {
+		fmt.Println("Error setting data:", err.Error())
+	}
+	fmt.Println(mainService.serverConfig)
 }
 
 var mainServiceInstance *MainService
