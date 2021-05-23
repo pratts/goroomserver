@@ -44,17 +44,14 @@ func (mainService *MainService) StartServer(wg *sync.WaitGroup) {
 
 func (mainService *MainService) loadConfigFile() {
 	data, err := ioutil.ReadFile("config/server.json")
-	fmt.Println("load data:", data)
 	if err != nil {
 		fmt.Println("Error parsing:", err.Error())
 	}
 
 	err = json.Unmarshal(data, &(mainService.serverConfig))
-	fmt.Println("err:", err)
 	if err != nil {
 		fmt.Println("Error setting data:", err.Error())
 	}
-	fmt.Println(mainService.serverConfig)
 }
 
 var mainServiceInstance *MainService

@@ -12,6 +12,9 @@ func (e *EventService) getEvent(code int) string {
 
 func (e *EventService) handleEvent(payload Payload) {
 	fmt.Println("Received:", payload.EventType, " Payload:", payload)
+	if payload.Data == nil {
+		payload.Data = make(map[string]interface{})
+	}
 
 	if payload.EventType == CONNECTION {
 		e.handleConnection(payload)
@@ -31,7 +34,7 @@ func (e *EventService) handleEvent(payload Payload) {
 		payload.RefRoom, _ = payload.RefApp.GetRoomByName(payload.RoomName)
 	}
 
-	event := Event{payload: payload.Payload, room: payload.RefRoom, app: payload.RefApp}
+	event := Event{payload: payload.Data, room: payload.RefRoom, app: payload.RefApp}
 
 	user := getValidUser(payload)
 	if (User{}.name) == user.name {
@@ -108,7 +111,7 @@ func (e *EventService) handleLogin(payload Payload, event Event, response *Respo
 		response.error = ServerError{code: USER_ALREADY_IN_ROOM, message: ErrorMessages[USER_ALREADY_LOGGED_IN]}
 		return
 	}
-	payload.RefApp.userService.CreateAndAddUser(payload.Payload["username"].(string), payload.Connection)
+	payload.RefApp.userService.CreateAndAddUser(payload.Data["username"].(string), payload.Connection)
 }
 
 func (e *EventService) handleLogout(payload Payload, event Event, response *Response) {
@@ -126,7 +129,7 @@ func (e *EventService) handleLogout(payload Payload, event Event, response *Resp
 }
 
 func (e *EventService) handleJoinRoom(payload Payload, event Event, response *Response) {
-	roomName := payload.Payload["roomName"].(string)
+	roomName := payload.Data["roomName"].(string)
 	if roomName == "" {
 		response.code = SERVER_ERROR
 		response.error = ServerError{code: ROOM_NAME_INVALID, message: ErrorMessages[ROOM_NAME_INVALID]}
@@ -157,7 +160,7 @@ func (e *EventService) handleJoinRoom(payload Payload, event Event, response *Re
 }
 
 func (e *EventService) handleLeaveRoom(payload Payload, event Event, response *Response) {
-	roomName := payload.Payload["roomName"].(string)
+	roomName := payload.Data["roomName"].(string)
 	if roomName == "" {
 		//handle case when roomname is blank
 		response.code = SERVER_ERROR
@@ -203,7 +206,7 @@ func (e *EventService) handleMessage(payload Payload, event Event, response *Res
 }
 
 func (e *EventService) pushMessage(payload Payload, response Response) {
-	response.data = payload.Payload
+	response.data = payload.Data
 	response.data["roomName"] = payload.RoomName
 	response.data["appName"] = payload.AppName
 	if payload.RemoteAddress != "" {

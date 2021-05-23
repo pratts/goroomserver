@@ -30,7 +30,7 @@ type Payload struct {
 	AppName       string                 `json:"appName"`
 	RoomName      string                 `json:"roomName"`
 	EventType     int                    `json:"eventType"`
-	Payload       map[string]interface{} `json:"payload"`
+	Data          map[string]interface{} `json:"data"`
 	RemoteAddress string
 	RefRoom       Room
 	RefApp        AppService
