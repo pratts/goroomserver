@@ -30,5 +30,12 @@ The server consists of multiple components:
         f.) Leave Room
         g.) Message
 
+### More feature coming
+    1. Trigerring events from server side
+    2. Thread pool to handle the events triggered. Currently each websocket message is handled in a separate goroutine
+    3. Exception handling
+    4. Client side libraries
+    5. Server side application example
+
 ### Credits
 The server users the [Gorilla-Websocket](https://github.com/gorilla/websocket) library for websocket implementation.
