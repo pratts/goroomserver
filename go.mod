@@ -1,4 +1,4 @@
-module github.com/pratts/go-room-server
+module github.com/pratts/goroomserver
 
 go 1.15
 
