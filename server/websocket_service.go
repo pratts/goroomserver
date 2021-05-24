@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/websocket"
+	config "github.com/pratts/goroomserver/config"
 )
 
 type WebSocketService struct {
@@ -59,11 +60,11 @@ func (webSocketService *WebSocketService) WriteToSocket(c *websocket.Conn, res R
 	}
 }
 
-func (webSocketService *WebSocketService) startWebSocketServer(config *ServerConfig) {
-	var url = fmt.Sprintf("%s:%d", config.getHost(), config.getPort())
+func (webSocketService *WebSocketService) startWebSocketServer(c *config.ServerConfiguration) {
+	var url = fmt.Sprintf("%s:%d", c.GetHost(), c.GetPort())
 	var addr = flag.String("addr", url, "http service address")
 	flag.Parse()
 	log.SetFlags(0)
-	http.HandleFunc(config.getRequestPattern(), webSocketService.listen)
+	http.HandleFunc(c.GetRequestPattern(), webSocketService.listen)
 	log.Fatal(http.ListenAndServe(*addr, nil))
 }

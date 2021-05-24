@@ -1,10 +1,9 @@
 package server
 
 import (
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
 	"sync"
+
+	config "github.com/pratts/goroomserver/config"
 )
 
 type MainService struct {
@@ -12,11 +11,12 @@ type MainService struct {
 	eventService      EventService
 	appServices       map[string]AppService
 	webSocketService  WebSocketService
-	serverConfig      ServerConfig
+	Configuration     config.ServerConfiguration
 }
 
 func (mainService *MainService) Init() {
-	mainService.loadConfigFile()
+	mainService.Configuration = config.ServerConfiguration{}
+	mainService.Configuration.LoadConfigFile()
 	mainService.eventService = EventService{mainService: mainService}
 	mainService.connectionService = ConnectionService{}
 	mainService.connectionService.Init()
@@ -39,19 +39,7 @@ func (mainService *MainService) GetAppService(appName string) (AppService, bool)
 
 func (mainService *MainService) StartServer(wg *sync.WaitGroup) {
 	defer wg.Done()
-	mainService.webSocketService.startWebSocketServer(&mainService.serverConfig)
-}
-
-func (mainService *MainService) loadConfigFile() {
-	data, err := ioutil.ReadFile("config/server.json")
-	if err != nil {
-		fmt.Println("Error parsing:", err.Error())
-	}
-
-	err = json.Unmarshal(data, &(mainService.serverConfig))
-	if err != nil {
-		fmt.Println("Error setting data:", err.Error())
-	}
+	mainService.webSocketService.startWebSocketServer(&mainService.Configuration)
 }
 
 var mainServiceInstance *MainService
