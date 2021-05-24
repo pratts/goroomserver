@@ -30,7 +30,7 @@ func (serverConfig *ServerConfiguration) LoadConfigFile() {
 		fmt.Println("Error parsing:", err.Error())
 	}
 
-	err = json.Unmarshal(data, &serverConfig)
+	err = json.Unmarshal(data, serverConfig)
 	if err != nil {
 		fmt.Println("Error setting data:", err.Error())
 	}
