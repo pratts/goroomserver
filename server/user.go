@@ -1,4 +1,4 @@
-package goroomserver
+package server
 
 type User struct {
 	id         int

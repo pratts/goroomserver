@@ -1,4 +1,4 @@
-package goroomserver
+package server
 
 type UserService struct {
 	userMap           map[string]User

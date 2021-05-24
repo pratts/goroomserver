@@ -1,4 +1,4 @@
-package goroomserver
+package server
 
 import (
 	"encoding/json"

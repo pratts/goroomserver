@@ -1,4 +1,4 @@
-package goroomserver
+package server
 
 type ServerConfig struct {
 	Host           string `json:"host"`

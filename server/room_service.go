@@ -1,4 +1,4 @@
-package goroomserver
+package server
 
 type RoomService struct {
 	roomMap         map[string]Room

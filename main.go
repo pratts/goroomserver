@@ -3,11 +3,11 @@ package main
 import (
 	"sync"
 
-	"github.com/pratts/go-room-server/goroomserver"
+	"github.com/pratts/goroomserver/server"
 )
 
 func main() {
-	instance := goroomserver.GetInstance()
+	instance := server.GetInstance()
 	instance.Init()
 	var wg sync.WaitGroup
 	wg.Add(1)

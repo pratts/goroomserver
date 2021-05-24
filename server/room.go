@@ -1,4 +1,4 @@
-package goroomserver
+package server
 
 type Room struct {
 	id           int

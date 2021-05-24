@@ -1,4 +1,4 @@
-package goroomserver
+package server
 
 const (
 	CONNECTION       int = 1

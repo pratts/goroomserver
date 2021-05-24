@@ -1,4 +1,4 @@
-package goroomserver
+package server
 
 import (
 	"github.com/gorilla/websocket"
