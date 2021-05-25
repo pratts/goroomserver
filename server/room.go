@@ -6,7 +6,7 @@ type Room struct {
 	usersMap     map[string]User
 	maxUserCount int
 	eventHandler map[int]EventHandler
-	extension    Extension
+	extension    *Extension
 }
 
 func (r *Room) InitRoomData() {
@@ -17,7 +17,7 @@ func (r *Room) InitRoomData() {
 
 func (r *Room) initExtension() {
 	event := Event{room: *r}
-	r.extension.init(event)
+	(*r.extension).init(event)
 }
 
 func (r *Room) GetId() int {
@@ -86,7 +86,7 @@ func (r *Room) getEventHandler() map[int]EventHandler {
 }
 
 func (r *Room) getExtension() Extension {
-	return r.extension
+	return *r.extension
 }
 
 func (r *Room) sendResponseToUser(userName string, payload Response) {
