@@ -16,6 +16,8 @@ func (appService *AppService) InitData() {
 	appService.userService.InitUserService()
 
 	appService.CreateEventHandler()
+
+	appService.initExtension()
 }
 
 func (appService *AppService) GetName() string {
