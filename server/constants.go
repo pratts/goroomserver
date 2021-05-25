@@ -42,6 +42,9 @@ const (
 	USER_ALREADY_IN_ROOM   int = 8
 	USER_NOT_IN_ROOM       int = 9
 	INVALID_EVENT          int = 10
+	DISCONNECTION_ERROR    int = 11
+	ROOM_JOIN_ERROR        int = 12
+	LEAVE_ROOM_ERROR       int = 13
 	SERVER_ERROR           int = 500
 	SUCCESS                int = 200
 )
@@ -57,5 +60,8 @@ var ErrorMessages = map[int]string{
 	USER_ALREADY_IN_ROOM:   "User has already joined the room",
 	USER_NOT_IN_ROOM:       "User is not available in the room",
 	INVALID_EVENT:          "Invalid event provided",
+	DISCONNECTION_ERROR:    "There is an error with disconnection",
+	ROOM_JOIN_ERROR:        "There is an error while joining room",
+	LEAVE_ROOM_ERROR:       "There is an error leaving the room",
 	SERVER_ERROR:           "Server Error",
 }

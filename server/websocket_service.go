@@ -49,14 +49,32 @@ func (webSocketService *WebSocketService) notifyEventHandler(payload Payload) {
 	go webSocketService.eventService.handleEvent(payload)
 }
 
-func (webSocketService *WebSocketService) WriteToSocket(c *websocket.Conn, res Response) {
-	data, parseError := json.Marshal(&res)
+func (webSocketService *WebSocketService) WriteToSocket(c *websocket.Conn, res *Response) {
+	data, parseError := json.Marshal(*res)
 	if parseError != nil {
 		log.Println("error in parsing")
 	}
 	err := c.WriteMessage(websocket.TextMessage, data)
 	if err != nil {
 		log.Println("write:", err)
+	}
+}
+
+func (webSocketService *WebSocketService) PushToSocket(c *websocket.Conn, payload interface{}) {
+	data, parseError := json.Marshal(&payload)
+	if parseError != nil {
+		log.Println("error in parsing")
+	}
+	err := c.WriteMessage(websocket.TextMessage, data)
+	if err != nil {
+		log.Println("write:", err)
+	}
+}
+
+func (webSocketService *WebSocketService) PushJsonToSocket(c *websocket.Conn, payload interface{}) {
+	err := c.WriteJSON(payload)
+	if err != nil {
+		log.Println("Error in sending json to user")
 	}
 }
 

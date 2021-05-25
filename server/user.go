@@ -45,5 +45,5 @@ func (u *User) DisconnectUser() {
 }
 
 func (u *User) SendMessageToUser(payload Response) {
-	u.connection.WriteToSocket(payload)
+	u.connection.WriteToSocket(&payload)
 }

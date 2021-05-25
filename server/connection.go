@@ -22,6 +22,6 @@ func (c *Connection) GetRemoteAddress() string {
 	return c.RemoteAddress
 }
 
-func (c *Connection) WriteToSocket(payload Response) {
+func (c *Connection) WriteToSocket(payload *Response) {
 	GetInstance().webSocketService.WriteToSocket(c.SocketConnection, payload)
 }

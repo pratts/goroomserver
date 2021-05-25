@@ -29,8 +29,14 @@ type Payload struct {
 }
 
 type Response struct {
-	data map[string]interface{}
-	err  error
+	Data  map[string]interface{} `json:"data"`
+	Code  int                    `json:"code"`
+	Error ServerError            `json:"error"`
+}
+
+type ServerError struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
 }
 
 func main() {
