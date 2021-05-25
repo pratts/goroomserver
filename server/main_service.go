@@ -24,6 +24,8 @@ func (mainService *MainService) Init() {
 	mainService.webSocketService = WebSocketService{
 		eventService: &mainService.eventService,
 	}
+
+	mainService.appServices = make(map[string]AppService)
 }
 
 func (mainService *MainService) CreateAppService(appName string, extension Extension) {
