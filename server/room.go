@@ -17,7 +17,7 @@ func (r *Room) InitRoomData() {
 
 func (r *Room) initExtension() {
 	event := Event{room: *r}
-	r.extension.initExtension(event)
+	r.extension.InitExtension(event)
 }
 
 func (r *Room) GetId() int {
