@@ -1,7 +1,7 @@
 package server
 
 type Extension interface {
-	init(Event)
+	initExtension(Event)
 }
 
 type EventHandler interface {

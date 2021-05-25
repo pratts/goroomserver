@@ -26,7 +26,7 @@ func (appService *AppService) GetName() string {
 
 func (appService *AppService) initExtension() {
 	event := Event{app: *appService}
-	(*appService.extension).init(event)
+	(*appService.extension).initExtension(event)
 }
 
 func (appService *AppService) setExtension(extension *Extension) {
