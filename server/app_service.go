@@ -5,7 +5,7 @@ type AppService struct {
 	roomService  RoomService
 	userService  UserService
 	eventHandler map[int]EventHandler
-	extension    *Extension
+	extension    Extension
 }
 
 func (appService *AppService) InitData() {
@@ -26,15 +26,15 @@ func (appService *AppService) GetName() string {
 
 func (appService *AppService) initExtension() {
 	event := Event{app: *appService}
-	(*appService.extension).initExtension(event)
+	appService.extension.initExtension(event)
 }
 
-func (appService *AppService) setExtension(extension *Extension) {
+func (appService *AppService) setExtension(extension Extension) {
 	appService.extension = extension
 }
 
 func (appService *AppService) GetExtension() Extension {
-	return *appService.extension
+	return appService.extension
 }
 
 func (appService *AppService) GetRoomService() RoomService {
@@ -46,7 +46,7 @@ func (appService *AppService) GetUserService() UserService {
 }
 
 func (appService *AppService) addExtension(extension Extension) {
-	appService.extension = &extension
+	appService.extension = extension
 }
 
 func (appService *AppService) addEventHandler(code int, e EventHandler) {
@@ -62,7 +62,7 @@ func (appService *AppService) CreateEventHandler() map[int]EventHandler {
 	return appService.eventHandler
 }
 
-func (appService *AppService) CreateRoom(roomName string, maxUsers int, extension *Extension) Room {
+func (appService *AppService) CreateRoom(roomName string, maxUsers int, extension Extension) Room {
 	room := appService.roomService.createRoom(roomName, maxUsers, extension)
 	return room
 }

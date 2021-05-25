@@ -26,7 +26,7 @@ func (mainService *MainService) Init() {
 	}
 }
 
-func (mainService *MainService) CreateAppService(appName string, extension *Extension) {
+func (mainService *MainService) CreateAppService(appName string, extension Extension) {
 	appService := AppService{name: appName, extension: extension}
 	appService.InitData()
 	mainService.appServices[appName] = appService
