@@ -29,11 +29,12 @@ func (us *UserService) GetUserForConnection(ip string) (User, bool) {
 	return user, ok
 }
 
-func (us *UserService) CreateAndAddUser(name string, connection Connection) {
+func (us *UserService) CreateAndAddUser(name string, connection Connection) User {
 	us.userCount++
 	user := User{name: name, id: us.userCount, connection: &connection}
 	us.AddUser(user)
 	us.AddUserConnection(connection.GetRemoteAddress(), user)
+	return user
 }
 
 func (us *UserService) RemoveUser(userName string) {

@@ -33,6 +33,7 @@ func (e *EventService) handleEvent(payload Payload) {
 	if ok == false {
 		response := Response{EventType: payload.EventType, Code: SERVER_ERROR, Error: ServerError{Code: APP_NAME_INVALID, Message: ErrorMessages[APP_NAME_INVALID]}}
 		e.pushMessage(payload, &response)
+		return
 	}
 
 	payload.RefApp = app
@@ -103,7 +104,7 @@ func (e *EventService) handleDisconnection(payload Payload, event Event, respons
 		}
 		evtHandler.handleEvent(event)
 	}
-	payload.RefApp.userService.RemoveUser(user.name)
+	payload.RefApp.logout(payload)
 	e.mainService.connectionService.removeConnection(payload.RemoteAddress)
 }
 
@@ -126,7 +127,7 @@ func (e *EventService) handleLogin(payload Payload, event Event, response *Respo
 		response.Error = ServerError{Code: USER_ALREADY_LOGGED_IN, Message: ErrorMessages[USER_ALREADY_LOGGED_IN]}
 		return
 	}
-	payload.RefApp.userService.CreateAndAddUser(payload.Data["username"].(string), payload.Connection)
+	payload.RefApp.login(payload)
 }
 
 func (e *EventService) handleLogout(payload Payload, event Event, response *Response) {

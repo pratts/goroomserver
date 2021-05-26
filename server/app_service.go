@@ -92,3 +92,25 @@ func (appService *AppService) GetRoomByName(roomName string) (Room, bool) {
 func (appService *AppService) GetUserForRoom(roomName string) map[string]User {
 	return appService.roomService.getUserForRoom(roomName)
 }
+
+func (appService *AppService) login(payload Payload) {
+	user := appService.userService.CreateAndAddUser(payload.Data["username"].(string), payload.Connection)
+	response := Response{EventType: LOGIN, Code: SUCCESS}
+	data := map[string]interface{}{
+		"userName": user.name,
+		"appName":  appService.name,
+	}
+	response.Data = data
+	appService.userService.NotifyUser(user, response)
+}
+
+func (appService *AppService) logout(payload Payload) {
+	response := Response{EventType: LOGIN, Code: SUCCESS}
+	data := map[string]interface{}{
+		"userName": payload.RefUser.name,
+		"appName":  appService.name,
+	}
+	response.Data = data
+	appService.userService.NotifyUser(payload.RefUser, response)
+	appService.userService.RemoveUser(payload.RefUser.name)
+}
