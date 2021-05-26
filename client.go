@@ -29,9 +29,10 @@ type Payload struct {
 }
 
 type Response struct {
-	Data  map[string]interface{} `json:"data"`
-	Code  int                    `json:"code"`
-	Error ServerError            `json:"error"`
+	EventType int                    `json:"eventType"`
+	Data      map[string]interface{} `json:"data"`
+	Code      int                    `json:"code"`
+	Error     ServerError            `json:"error"`
 }
 
 type ServerError struct {
@@ -75,6 +76,8 @@ func main() {
 		}
 	}()
 
+	var eventList [2]int = [2]int{6, 11}
+	var index = 0
 	ticker := time.NewTicker(time.Second)
 	defer ticker.Stop()
 
@@ -85,8 +88,11 @@ func main() {
 		case t := <-ticker.C:
 			fmt.Println("t:", t)
 			payload := make(map[string]interface{})
-			payload["a"] = 1
-			data := Payload{RoomName: "test1", EventType: 13, Payload: payload}
+			payload["username"] = "prateek"
+			data := Payload{AppName: "test", EventType: eventList[index], Payload: payload}
+			if index == 0 {
+				index = index + 1
+			}
 			b, err1 := json.Marshal(&data)
 			if err1 != nil {
 				fmt.Println("error in parsing")

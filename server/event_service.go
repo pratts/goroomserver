@@ -43,7 +43,7 @@ func (e *EventService) handleEvent(payload Payload) {
 	event := Event{payload: payload.Data, room: payload.RefRoom, app: payload.RefApp}
 
 	user := getValidUser(payload)
-	if (User{}.name) == user.name {
+	if (User{}.name) == user.name && payload.EventType != LOGIN {
 		response := Response{EventType: payload.EventType, Code: SERVER_ERROR, Error: ServerError{Code: USER_NOT_EXISTS, Message: ErrorMessages[USER_NOT_EXISTS]}}
 		e.pushMessage(payload, &response)
 		return
