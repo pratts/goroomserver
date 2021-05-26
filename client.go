@@ -25,7 +25,7 @@ type Payload struct {
 	AppName   string                 `json:"appName"`
 	RoomName  string                 `json:"roomName"`
 	EventType int                    `json:"eventType"`
-	Payload   map[string]interface{} `json:"payload"`
+	Data      map[string]interface{} `json:"data"`
 }
 
 type Response struct {
@@ -89,7 +89,7 @@ func main() {
 			fmt.Println("t:", t)
 			payload := make(map[string]interface{})
 			payload["username"] = "prateek"
-			data := Payload{AppName: "test", EventType: eventList[index], Payload: payload}
+			data := Payload{AppName: "test", EventType: eventList[index], Data: payload}
 			if index == 0 {
 				index = index + 1
 			}
