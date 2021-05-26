@@ -9,9 +9,10 @@ type EventHandler interface {
 }
 
 type Response struct {
-	Data  map[string]interface{} `json:"data"`
-	Code  int                    `json:"code"`
-	Error ServerError            `json:"error"`
+	EventType int                    `json:"eventType"`
+	Data      map[string]interface{} `json:"data"`
+	Code      int                    `json:"code"`
+	Error     ServerError            `json:"error"`
 }
 
 type ServerError struct {

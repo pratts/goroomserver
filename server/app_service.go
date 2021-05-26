@@ -64,11 +64,25 @@ func (appService *AppService) CreateEventHandler() map[int]EventHandler {
 
 func (appService *AppService) CreateRoom(roomName string, maxUsers int, extension Extension) Room {
 	room := appService.roomService.createRoom(roomName, maxUsers, extension)
+	response := Response{EventType: ROOM_ADD, Code: SUCCESS}
+	data := map[string]interface{}{
+		"roomName": roomName,
+		"appName":  appService.name,
+	}
+	response.Data = data
+	appService.userService.NotifyAll(response)
 	return room
 }
 
 func (appService *AppService) RemoveRoom(roomName string) {
 	appService.roomService.removeRoom(roomName)
+	response := Response{EventType: ROOM_REMOVE, Code: SUCCESS}
+	data := map[string]interface{}{
+		"roomName": roomName,
+		"appName":  appService.name,
+	}
+	response.Data = data
+	appService.userService.NotifyAll(response)
 }
 
 func (appService *AppService) GetRoomByName(roomName string) (Room, bool) {

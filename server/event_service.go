@@ -24,14 +24,14 @@ func (e *EventService) handleEvent(payload Payload) {
 	payload.Connection, _ = e.mainService.connectionService.GetConnectionByIp(payload.RemoteAddress)
 
 	if payload.AppName == "" {
-		response := Response{Code: SERVER_ERROR, Error: ServerError{Code: APP_NAME_INVALID, Message: ErrorMessages[APP_NAME_INVALID]}}
+		response := Response{EventType: payload.EventType, Code: SERVER_ERROR, Error: ServerError{Code: APP_NAME_INVALID, Message: ErrorMessages[APP_NAME_INVALID]}}
 		e.pushMessage(payload, &response)
 		return
 	}
 
 	app, ok := e.mainService.GetAppService(payload.AppName)
 	if ok == false {
-		response := Response{Code: SERVER_ERROR, Error: ServerError{Code: APP_NAME_INVALID, Message: ErrorMessages[APP_NAME_INVALID]}}
+		response := Response{EventType: payload.EventType, Code: SERVER_ERROR, Error: ServerError{Code: APP_NAME_INVALID, Message: ErrorMessages[APP_NAME_INVALID]}}
 		e.pushMessage(payload, &response)
 	}
 
@@ -44,14 +44,14 @@ func (e *EventService) handleEvent(payload Payload) {
 
 	user := getValidUser(payload)
 	if (User{}.name) == user.name {
-		response := Response{Code: SERVER_ERROR, Error: ServerError{Code: USER_NOT_EXISTS, Message: ErrorMessages[USER_NOT_EXISTS]}}
+		response := Response{EventType: payload.EventType, Code: SERVER_ERROR, Error: ServerError{Code: USER_NOT_EXISTS, Message: ErrorMessages[USER_NOT_EXISTS]}}
 		e.pushMessage(payload, &response)
 		return
 	}
 	payload.RefUser = user
 	event.user = user
 
-	response := Response{Code: SUCCESS}
+	response := Response{EventType: payload.EventType, Code: SUCCESS}
 
 	switch payload.EventType {
 	case DISCONNECTION:
@@ -75,7 +75,6 @@ func (e *EventService) handleEvent(payload Payload) {
 	default:
 		response.Code = SERVER_ERROR
 		response.Error = ServerError{Code: INVALID_EVENT, Message: ErrorMessages[INVALID_EVENT]}
-		e.pushMessage(payload, &response)
 	}
 
 	fmt.Println("Finally sending response")

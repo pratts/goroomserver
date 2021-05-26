@@ -12,6 +12,8 @@ const (
 	SUBSCRIBE_ROOM   int = 9
 	UNSUBSCRIBE_ROOM int = 10
 	MESSAGE          int = 11
+	ROOM_ADD         int = 12
+	ROOM_REMOVE      int = 13
 )
 
 var EventsText = map[int]string{
@@ -25,6 +27,8 @@ var EventsText = map[int]string{
 	SUBSCRIBE_ROOM:   "Subscribe",
 	UNSUBSCRIBE_ROOM: "Unsubscribe",
 	MESSAGE:          "Message",
+	ROOM_ADD:         "Room Add",
+	ROOM_REMOVE:      "Room Remove",
 }
 
 func EventText(code int) string {
