@@ -46,3 +46,71 @@ func (rs *RoomService) getUserForRoom(roomName string) map[string]User {
 	}
 	return nil
 }
+
+func (rs *RoomService) joinRoom(appService *AppService, user User, roomName string, payload map[string]interface{}) int {
+	// user, ok := appService.userService.GetUserByName(userName)
+	if roomName == "" {
+		return ROOM_NAME_INVALID
+	}
+	room, ok := rs.getRoomByName(roomName)
+	if ok == false {
+		//handle case when room does not exist
+		return ROOM_NOT_EXISTS
+	}
+	_, userExists := room.GetUserByName(user.name)
+	if userExists == true {
+		//handle case when user already is in room
+		return USER_ALREADY_IN_ROOM
+	}
+
+	handler, evtExists := room.eventHandler[JOIN_ROOM]
+	if evtExists == true {
+		event := Event{
+			payload: payload,
+			room:    room,
+			app:     *appService,
+			user:    user,
+		}
+		_, err := handler.handleEvent(event)
+		if err != nil {
+			return ROOM_JOIN_ERROR
+		}
+	}
+
+	room.addUser(user)
+	return SUCCESS
+}
+
+func (rs *RoomService) leaveRoom(appService *AppService, user User, roomName string, payload map[string]interface{}) int {
+	if roomName == "" {
+		//handle case when roomname is blank
+		return ROOM_NAME_INVALID
+	}
+	room, ok := rs.getRoomByName(roomName)
+	if ok == false {
+		//handle case when room does not exist
+		return ROOM_NOT_EXISTS
+	}
+	handler, evtExists := room.eventHandler[LEAVE_ROOM]
+
+	_, userExists := room.GetUserByName(user.name)
+	if userExists == false {
+		//handle case when user already is not in room
+		return USER_NOT_IN_ROOM
+	}
+
+	if evtExists == true {
+		event := Event{
+			payload: payload,
+			room:    room,
+			app:     *appService,
+			user:    user,
+		}
+		_, err := handler.handleEvent(event)
+		if err != nil {
+			return LEAVE_ROOM_ERROR
+		}
+	}
+	room.removeUser(user)
+	return SUCCESS
+}

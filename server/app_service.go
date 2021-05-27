@@ -93,7 +93,7 @@ func (appService *AppService) GetUserForRoom(roomName string) map[string]User {
 	return appService.roomService.getUserForRoom(roomName)
 }
 
-func (appService *AppService) login(payload Payload) {
+func (appService *AppService) Login(payload Payload) {
 	user := appService.userService.CreateAndAddUser(payload.Data["username"].(string), payload.Connection)
 	response := Response{EventType: LOGIN, Code: SUCCESS}
 	data := map[string]interface{}{
@@ -104,7 +104,7 @@ func (appService *AppService) login(payload Payload) {
 	appService.userService.NotifyUser(user, response)
 }
 
-func (appService *AppService) logout(payload Payload) {
+func (appService *AppService) Logout(payload Payload) {
 	response := Response{EventType: LOGIN, Code: SUCCESS}
 	data := map[string]interface{}{
 		"userName": payload.RefUser.name,
@@ -113,4 +113,28 @@ func (appService *AppService) logout(payload Payload) {
 	response.Data = data
 	appService.userService.NotifyUser(payload.RefUser, response)
 	appService.userService.RemoveUser(payload.RefUser.name)
+}
+
+func (appService *AppService) JoinRoom(userName string, roomName string, payload map[string]interface{}) int {
+	user, ok := appService.userService.GetUserByName(userName)
+	if ok == false {
+		return USER_NOT_EXISTS
+	}
+	return appService.JoinUserRoom(user, roomName, payload)
+}
+
+func (appService *AppService) JoinUserRoom(user User, roomName string, payload map[string]interface{}) int {
+	return appService.roomService.joinRoom(appService, user, roomName, payload)
+}
+
+func (appService *AppService) LeaveRoom(userName string, roomName string, payload map[string]interface{}) int {
+	user, ok := appService.userService.GetUserByName(userName)
+	if ok == false {
+		return USER_NOT_EXISTS
+	}
+	return appService.LeaveUserRoom(user, roomName, payload)
+}
+
+func (appService *AppService) LeaveUserRoom(user User, roomName string, payload map[string]interface{}) int {
+	return appService.roomService.leaveRoom(appService, user, roomName, payload)
 }

@@ -10,6 +10,18 @@ func (e *EventService) getEvent(code int) string {
 	return EventText(code)
 }
 
+func (e *EventService) getResponse(eventType int, code int, payload map[string]interface{}, errorCode int, message string) Response {
+	res := Response{EventType: eventType, Code: code}
+	if payload != nil {
+		res.Data = payload
+	}
+
+	if code != SUCCESS {
+		res.Error = ServerError{Code: errorCode, Message: message}
+	}
+	return res
+}
+
 func (e *EventService) handleEvent(payload Payload) {
 	fmt.Println("Received:", payload.EventType, " Payload:", payload)
 	if payload.Data == nil {
@@ -24,14 +36,14 @@ func (e *EventService) handleEvent(payload Payload) {
 	payload.Connection, _ = e.mainService.connectionService.GetConnectionByIp(payload.RemoteAddress)
 
 	if payload.AppName == "" {
-		response := Response{EventType: payload.EventType, Code: SERVER_ERROR, Error: ServerError{Code: APP_NAME_INVALID, Message: ErrorMessages[APP_NAME_INVALID]}}
+		response := e.getResponse(payload.EventType, SERVER_ERROR, nil, APP_NAME_INVALID, ErrorMessages[APP_NAME_INVALID])
 		e.pushMessage(payload, &response)
 		return
 	}
 
 	app, ok := e.mainService.GetAppService(payload.AppName)
 	if ok == false {
-		response := Response{EventType: payload.EventType, Code: SERVER_ERROR, Error: ServerError{Code: APP_NAME_INVALID, Message: ErrorMessages[APP_NAME_INVALID]}}
+		response := e.getResponse(payload.EventType, SERVER_ERROR, nil, APP_NAME_INVALID, ErrorMessages[APP_NAME_INVALID])
 		e.pushMessage(payload, &response)
 		return
 	}
@@ -45,7 +57,7 @@ func (e *EventService) handleEvent(payload Payload) {
 
 	user := getValidUser(payload)
 	if (User{}.name) == user.name && payload.EventType != LOGIN {
-		response := Response{EventType: payload.EventType, Code: SERVER_ERROR, Error: ServerError{Code: USER_NOT_EXISTS, Message: ErrorMessages[USER_NOT_EXISTS]}}
+		response := e.getResponse(payload.EventType, SERVER_ERROR, nil, USER_NOT_EXISTS, ErrorMessages[USER_NOT_EXISTS])
 		e.pushMessage(payload, &response)
 		return
 	}
@@ -93,9 +105,11 @@ func (e *EventService) handleDisconnection(payload Payload, event Event, respons
 	disconnectionHandler, ok := payload.RefApp.eventHandler[DISCONNECTION]
 	if ok == true {
 		_, error := disconnectionHandler.handleEvent(event)
-		response.Code = SERVER_ERROR
-		response.Error = ServerError{Code: DISCONNECTION_ERROR, Message: error.Error()}
-		return
+		if error != nil {
+			response.Code = SERVER_ERROR
+			response.Error = ServerError{Code: DISCONNECTION_ERROR, Message: error.Error()}
+			return
+		}
 	}
 	for _, room := range user.roomMap {
 		evtHandler, ok := room.eventHandler[DISCONNECTION]
@@ -104,7 +118,7 @@ func (e *EventService) handleDisconnection(payload Payload, event Event, respons
 		}
 		evtHandler.handleEvent(event)
 	}
-	payload.RefApp.logout(payload)
+	payload.RefApp.Logout(payload)
 	e.mainService.connectionService.removeConnection(payload.RemoteAddress)
 }
 
@@ -127,7 +141,7 @@ func (e *EventService) handleLogin(payload Payload, event Event, response *Respo
 		response.Error = ServerError{Code: USER_ALREADY_LOGGED_IN, Message: ErrorMessages[USER_ALREADY_LOGGED_IN]}
 		return
 	}
-	payload.RefApp.login(payload)
+	payload.RefApp.Login(payload)
 }
 
 func (e *EventService) handleLogout(payload Payload, event Event, response *Response) {
@@ -148,70 +162,21 @@ func (e *EventService) handleLogout(payload Payload, event Event, response *Resp
 }
 
 func (e *EventService) handleJoinRoom(payload Payload, event Event, response *Response) {
-	roomName := payload.Data["roomName"].(string)
-	if roomName == "" {
+	errorCode := payload.RefApp.JoinUserRoom(payload.RefUser, payload.Data["roomName"].(string), payload.Data)
+	if errorCode != SUCCESS {
 		response.Code = SERVER_ERROR
-		response.Error = ServerError{Code: ROOM_NAME_INVALID, Message: ErrorMessages[ROOM_NAME_INVALID]}
+		response.Error = ServerError{Code: errorCode, Message: ErrorMessages[errorCode]}
 		return
 	}
-	room, ok := payload.RefApp.GetRoomByName(roomName)
-	if ok == false {
-		//handle case when room does not exist
-		response.Code = SERVER_ERROR
-		response.Error = ServerError{Code: ROOM_NOT_EXISTS, Message: ErrorMessages[ROOM_NOT_EXISTS]}
-		return
-	}
-	user := payload.RefUser
-	_, userExists := room.GetUserByName(user.name)
-	if userExists == true {
-		//handle case when user already is in room
-		response.Code = SERVER_ERROR
-		response.Error = ServerError{Code: USER_ALREADY_IN_ROOM, Message: ErrorMessages[USER_ALREADY_IN_ROOM]}
-		return
-	}
-
-	handler, evtExists := room.eventHandler[JOIN_ROOM]
-	if evtExists == true {
-		res, err := handler.handleEvent(event)
-		if err != nil {
-			res.Code = SERVER_ERROR
-			response.Error = ServerError{Code: ROOM_JOIN_ERROR, Message: ErrorMessages[ROOM_JOIN_ERROR]}
-		}
-	}
-
-	room.addUser(user)
 }
 
 func (e *EventService) handleLeaveRoom(payload Payload, event Event, response *Response) {
-	roomName := payload.Data["roomName"].(string)
-	if roomName == "" {
-		//handle case when roomname is blank
+	errorCode := payload.RefApp.LeaveUserRoom(payload.RefUser, payload.Data["roomName"].(string), payload.Data)
+	if errorCode != SUCCESS {
 		response.Code = SERVER_ERROR
-		response.Error = ServerError{Code: ROOM_NAME_INVALID, Message: ErrorMessages[ROOM_NAME_INVALID]}
+		response.Error = ServerError{Code: errorCode, Message: ErrorMessages[errorCode]}
 		return
 	}
-	room, ok := payload.RefApp.GetRoomByName(roomName)
-	if ok == false {
-		//handle case when room does not exist
-		response.Code = SERVER_ERROR
-		response.Error = ServerError{Code: ROOM_NOT_EXISTS, Message: ErrorMessages[ROOM_NOT_EXISTS]}
-		return
-	}
-	user := payload.RefUser
-	handler, evtExists := room.eventHandler[LEAVE_ROOM]
-
-	_, userExists := room.GetUserByName(user.name)
-	if userExists == false {
-		//handle case when user already is not in room
-		response.Code = SERVER_ERROR
-		response.Error = ServerError{Code: USER_NOT_IN_ROOM, Message: ErrorMessages[USER_NOT_IN_ROOM]}
-		return
-	}
-
-	if evtExists == true {
-		handler.handleEvent(event)
-	}
-	room.removeUser(user)
 }
 
 func (e *EventService) handleMessage(payload Payload, event Event, response *Response) {
